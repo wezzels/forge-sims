@@ -1,0 +1,195 @@
+version: "3.8"
+
+# FORGE-Sims Docker Compose - All 25 BMDS Simulators
+# Usage: docker-compose up -d
+
+services:
+  # === Core ===
+  bmd-sim-core:
+    build: ../bmd-sim-core
+    container_name: bmd-sim-core
+    restart: unless-stopped
+
+  # === Space-Based Sensors ===
+  bmd-sim-sbirs:
+    build: ../bmd-sim-sbirs
+    container_name: bmd-sim-sbirs
+    ports:
+      - "5010:8080"
+    restart: unless-stopped
+
+  bmd-sim-stss:
+    build: ../bmd-sim-stss
+    container_name: bmd-sim-stss
+    ports:
+      - "5011:8080"
+    restart: unless-stopped
+
+  bmd-sim-dsp:
+    build: ../bmd-sim-dsp
+    container_name: bmd-sim-dsp
+    ports:
+      - "5012:8080"
+    restart: unless-stopped
+
+  # === Radar Systems ===
+  bmd-sim-uewr:
+    build: ../bmd-sim-uewr
+    container_name: bmd-sim-uewr
+    ports:
+      - "5020:8080"
+    restart: unless-stopped
+
+  bmd-sim-lrdr:
+    build: ../bmd-sim-lrdr
+    container_name: bmd-sim-lrdr
+    ports:
+      - "5021:8080"
+    restart: unless-stopped
+
+  bmd-sim-cobra-judy:
+    build: ../bmd-sim-cobra-judy
+    container_name: bmd-sim-cobra-judy
+    ports:
+      - "5022:8080"
+    restart: unless-stopped
+
+  # === Interceptors ===
+  bmd-sim-gmd:
+    build: ../bmd-sim-gmd
+    container_name: bmd-sim-gmd
+    ports:
+      - "5030:8080"
+    restart: unless-stopped
+
+  bmd-sim-sm3:
+    build: ../bmd-sim-sm3
+    container_name: bmd-sim-sm3
+    ports:
+      - "5031:8080"
+    restart: unless-stopped
+
+  bmd-sim-sm6:
+    build: ../bmd-sim-sm6
+    container_name: bmd-sim-sm6
+    ports:
+      - "5032:8080"
+    restart: unless-stopped
+
+  bmd-sim-thaad-er:
+    build: ../bmd-sim-thaad-er
+    container_name: bmd-sim-thaad-er
+    ports:
+      - "5033:8080"
+    restart: unless-stopped
+
+  # === Threat Simulators ===
+  bmd-sim-icbm:
+    build: ../bmd-sim-icbm
+    container_name: bmd-sim-icbm
+    ports:
+      - "5040:8080"
+    restart: unless-stopped
+
+  bmd-sim-irbm:
+    build: ../bmd-sim-irbm
+    container_name: bmd-sim-irbm
+    ports:
+      - "5041:8080"
+    restart: unless-stopped
+
+  bmd-sim-hgv:
+    build: ../bmd-sim-hgv
+    container_name: bmd-sim-hgv
+    ports:
+      - "5042:8080"
+    restart: unless-stopped
+
+  bmd-sim-slcm:
+    build: ../bmd-sim-slcm
+    container_name: bmd-sim-slcm
+    ports:
+      - "5043:8080"
+    restart: unless-stopped
+
+  # === Countermeasures ===
+  bmd-sim-decoy:
+    build: ../bmd-sim-decoy
+    container_name: bmd-sim-decoy
+    ports:
+      - "5050:8080"
+    restart: unless-stopped
+
+  bmd-sim-jamming:
+    build: ../bmd-sim-jamming
+    container_name: bmd-sim-jamming
+    ports:
+      - "5051:8080"
+    restart: unless-stopped
+
+  # === C2 / Battle Management ===
+  bmd-sim-c2bmc:
+    build: ../bmd-sim-c2bmc
+    container_name: bmd-sim-c2bmc
+    ports:
+      - "5060:8080"
+    restart: unless-stopped
+
+  bmd-sim-gfcb:
+    build: ../bmd-sim-gfcb
+    container_name: bmd-sim-gfcb
+    ports:
+      - "5061:8080"
+    restart: unless-stopped
+
+  bmd-sim-ifxb:
+    build: ../bmd-sim-ifxb
+    container_name: bmd-sim-ifxb
+    ports:
+      - "5062:8080"
+    restart: unless-stopped
+
+  bmd-sim-jrsc:
+    build: ../bmd-sim-jrsc
+    container_name: bmd-sim-jrsc
+    ports:
+      - "5063:8080"
+    restart: unless-stopped
+
+  # === Communications ===
+  bmd-sim-link16:
+    build: ../bmd-sim-link16
+    container_name: bmd-sim-link16
+    ports:
+      - "5070:8080"
+    restart: unless-stopped
+
+  bmd-sim-jreap:
+    build: ../bmd-sim-jreap
+    container_name: bmd-sim-jreap
+    ports:
+      - "5071:8080"
+    restart: unless-stopped
+
+  # === Environmental ===
+  bmd-sim-space-weather:
+    build: ../bmd-sim-space-weather
+    container_name: bmd-sim-space-weather
+    ports:
+      - "5080:8080"
+    restart: unless-stopped
+
+  bmd-sim-atmospheric:
+    build: ../bmd-sim-atmospheric
+    container_name: bmd-sim-atmospheric
+    ports:
+      - "5081:8080"
+    restart: unless-stopped
+
+  # === Integration Tests ===
+  bmd-sim-integration:
+    build: ../bmd-sim-integration
+    container_name: bmd-sim-integration
+    ports:
+      - "5090:8080"
+    restart: unless-stopped
