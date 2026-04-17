@@ -1,6 +1,6 @@
 # FORGE-Sims Evaluation — Final
 
-**Date:** 2026-04-17 (Round 4 — Final)
+**Date:** 2026-04-17 (Round 4)
 **Tester:** Wez (AI)
 **Repo:** github.com/wezzels/forge-sims
 
@@ -11,34 +11,35 @@
 | Category | Total | Pass | Fail |
 |----------|-------|------|------|
 | Binaries execute (exit 0) | 33 | 33 | 0 |
-| `-v` verbose with sim details | 33 | 30 | 3 |
-| `-i` / `--interactive` with live metrics | 33 | 33 | 0 |
-| `-json` with parameters | 33 | 33 | 0 |
+| `-v` verbose flag | 33 | 30 | 3 |
+| `-i` interactive with live metrics | 33 | 33 | 0 |
+| `-json` output | 33 | 33 | 0 |
 | `-duration` / `-tick` / `-seed` | 33 | 33 | 0 |
 
-**All previous corrections resolved.**
+**33 total simulators: 30 BMDS + 3 new (air-traffic, satellite-tracker, space-debris)**
 
 ---
 
-## All 33 Sims — Confirmed Working
+## All 33 Sims — Verified
 
 ### New Simulators (3)
 
-| # | Binary | Type | Default | `-v` | `-i` | `-json` | Special Flags |
-|---|--------|------|---------|------|------|---------|---------------|
-| 31 | air-traffic | Air traffic tracker | ✅ | ❌ Missing | ✅ | ✅ (full flight data) | `-count`, `-seed` |
-| 32 | satellite-tracker | Live satellite tracker | ✅ | ❌ Missing | ✅ | ✅ | `-group`, `-count` |
-| 33 | space-debris | Debris simulator | ✅ | ❌ Missing | ✅ | ✅ (full orbital data) | `-count`, `-collisions`, `-threshold`, `-seed` |
+| # | Binary | Default | `-v` | `-i` | `-json` | Special Flags | Issues |
+|---|--------|---------|------|------|---------|---------------|--------|
+| 31 | air-traffic | ✅ | ❌ | ✅ | ✅ | `-count`, `-seed` | Missing `-v` |
+| 32 | satellite-tracker | ✅ | ❌ | ✅ | ✅ | `-group`, `-count` | Missing `-v`; `active`/`starlink` groups return 0 sats |
+| 33 | space-debris | ✅ | ❌ | ✅ | ✅ | `-count`, `-collisions`, `-threshold`, `-seed` | Missing `-v`; `-collisions` shows no close approaches |
 
-#### New Sim Details
+#### air-traffic
+Generates flights across 40 major hubs. Shows callsigns, aircraft types (B763, A388, B52, C172), altitude, speed, heading, phase (CRUISE/CLIMB/DESCENT/APPROACH). JSON includes per-flight data with origin, dest, lat, lon, progress.
 
-**air-traffic:** Generates flights across 40 major hubs with callsigns, aircraft types (B763, A388, B52, C172, etc.), altitude, speed, heading, phase (CRUISE/CLIMB/DESCENT/APPROACH). JSON output includes per-flight data (origin, dest, lat, lon, alt, speed, heading, progress).
+#### satellite-tracker
+Fetches live TLE data from Celestrak. Supports groups: `stations` (ISS, CSS - 30 sats), `gps-ops` (32 sats), `weather`, `starlink`, `active`. Shows NORAD ID, inclination, altitude, period, lat/lon. JSON includes per-satellite orbital data. ⚠️ `active` and `starlink` groups return 0 satellites (likely timeout or size limit on Celestrak fetch).
 
-**satellite-tracker:** Fetches live TLE data from Celestrak. Supports groups: active, stations, starlink, gps-ops, weather, etc. Tracks ISS, CSS, GPS constellation. Shows NORAD ID, inclination, altitude, period, lat/lon.
+#### space-debris
+Generates up to 25,000 debris objects with full orbital elements (inclination, RAAN, eccentricity, arg_perigee, mean_anomaly, mean_motion). Categories: LEO, GEO, MEO, HIGH. Types: DEBRIS, ROCKET_BODY, PAYLOAD. JSON includes per-object orbital data with lat/lon/RCS. ⚠️ `-collisions` flag accepted but no close approaches reported in output.
 
-**space-debris:** Generates 25,000 debris objects (default) with full orbital elements. Supports collision detection (`-collisions -threshold 50`). Categories: LEO, GEO, MEO, HIGH. Types: DEBRIS, ROCKET_BODY, PAYLOAD. JSON includes per-object orbital data.
-
-### BMDS Simulators (30) — Previously Verified
+### BMDS Simulators (30)
 
 | # | Binary | Default | `-v` | `-i` Metrics | `-json` | Special Flags |
 |---|--------|---------|------|-------------|---------|---------------|
@@ -75,77 +76,74 @@
 
 ---
 
-## Previously Reported Issues — All Resolved
+## Previously Reported Issues — All Resolved ✅
 
-| Issue | Status | Notes |
-|-------|--------|-------|
-| C2BMC nil pointer crash | ✅ Fixed | Runs clean, exit 0 |
-| Interactive mode was stub (`Running...` only) | ✅ Fixed | Now shows live per-tick metrics |
-| Double-tick printing | ✅ Fixed | Single print per tick |
-| JSON was minimal (`{simulator, status}`) | ✅ Fixed | Now includes `parameters` object with sim data |
-| DecoyType format string (`%!s(...)`) | ✅ Fixed | Shows `BALLOON`, `INFLATABLE_RV` |
-| `-v` regression (showed only seed/tick) | ✅ Fixed | Shows sim-specific details again |
-| 6 binaries missing new flags | ✅ Fixed | aegis, gbr, hub, patriot, thaad, tpy2 rebuilt |
+| Issue | Status |
+|-------|--------|
+| C2BMC nil pointer crash | ✅ Fixed |
+| Interactive mode was stub (`Running...` only) | ✅ Fixed — shows live metrics |
+| Double-tick printing | ✅ Fixed |
+| JSON was minimal (`{simulator, status}`) | ✅ Fixed — includes parameters/data |
+| DecoyType format string (`%!s(...)`) | ✅ Fixed — shows BALLOON/INFLATABLE_RV |
+| `-v` regression | ✅ Fixed — shows sim-specific details |
+| 6 binaries missing new flags | ✅ Fixed — all rebuilt |
 
 ---
 
-## Corrections Needed — New Sims
+## Corrections Needed
 
 | Priority | Issue | Binary | Fix |
 |----------|-------|--------|-----|
-| **P1** | Missing `-v` flag | air-traffic, satellite-tracker, space-debris | Add verbose mode consistent with BMDS sims |
-| **P2** | satellite-tracker: `active` group returns 0 sats | satellite-tracker | Celestrak `active` group may be too large; default should be `stations` or handle gracefully |
-| **P2** | space-debris: collision detection shows no results | space-debris | `-collisions` flag accepted but no close approaches reported in output |
-| **P3** | New sims use `-h` but BMDS sims use `-help`/`-h` | all 3 | Minor inconsistency in help flags |
-| **P3** | `--interactive` long flag missing | all 3 | BMDS sims have both `-i` and `--interactive`; new sims only have `-i` |
-| **P3** | `-seed` missing | satellite-tracker | No seed flag (fetches live data, so deterministic seed not applicable?) |
+| **P1** | Missing `-v` flag | air-traffic, satellite-tracker, space-debris | Add verbose mode |
+| P2 | `active`/`starlink` groups return 0 sats | satellite-tracker | Likely Celestrak timeout on large groups; add timeout/retry or paginate |
+| P2 | `-collisions` shows no close approaches | space-debris | Flag accepted but no collision data in output; may need more objects or propagation time |
+| P3 | Missing `--interactive` long flag | air-traffic, satellite-tracker, space-debris | BMDS sims have both `-i` and `--interactive` |
+| P3 | `-duration` format inconsistent | all | BMDS sims use Go duration (`3s`), new sims use int seconds (`3`) |
+
+---
 
 ## Remaining Enhancements (Not Bugs)
 
 | Priority | Enhancement | Notes |
 |----------|-------------|-------|
 | P1 | Full TUI/ANSI dashboard in `-i` mode | Currently line-by-line metrics, not panel layout |
-| P2 | Richer JSON output for BMDS sims | Add tracks, detections, trajectory data (not just parameters) |
+| P2 | Richer JSON output for BMDS sims | Add tracks, detections, trajectory data |
 | P2 | Keyboard controls in `-i` | pause/step/quit keys beyond ctrl+C |
-| P3 | Scenario-driven dynamic metrics | Interactive metrics currently static per tick; should evolve with scenario time |
+| P3 | Scenario-driven dynamic metrics | Interactive metrics currently static per tick |
 
 ---
 
-## Sample Interactive Output
+## Sample Outputs
 
+### air-traffic -i
 ```
-SBIRS Satellite Constellation Simulator
-=======================================
-  Mode: INTERACTIVE (ctrl+C to quit)
-[T+1s]   Sats: 6  GEO: 4  HEO: 2
-[T+2s]   Sats: 6  GEO: 4  HEO: 2
-[T+3s]   Sats: 6  GEO: 4  HEO: 2
-  Duration reached.
-```
-
-```
-THAAD Battery Simulator
-========================
-  Mode: INTERACTIVE (ctrl+C to quit)
-[T+1s] Launchers: 2  Missiles: 6  PK: 90%
-[T+2s] Launchers: 2  Missiles: 6  PK: 90%
-[T+3s] Launchers: 2  Missiles: 6  PK: 90%
-  Duration reached.
+[T+0s] 100 flights
+  COMMERCIAL      39    CARGO           17
+  PRIVATE         14    MILITARY        30
+  CRUISE     70   CLIMB      20
+  DESCENT    8    APPROACH   2
 ```
 
-## Sample JSON Output
+### satellite-tracker -i (stations)
+```
+[T+0s] Tracking 30 satellites
+  Visible: 30 | Eclipsed: 0
+  MANNED               6
+  OTHER                24
+```
 
+### space-debris -i
+```
+[T+0s] 5000 debris objects
+  LEO        3030  GEO         510
+  HIGH        953  MEO         507
+```
+
+### satellite-tracker -json
 ```json
 {
-  "simulator": "icbm",
-  "status": "complete",
-  "parameters": {
-    "apogee_km": 1200,
-    "flight_time_min": 30,
-    "mirvs": 3,
-    "range_km": 10000,
-    "reentry_mach": 20.59,
-    "stages": 3
-  }
+  "parameters": {"group": "gps-ops", "time": "2026-04-17T18:06:33Z", "tle_count": 5},
+  "satellites": [{"name": "GPS BIIR-2 (PRN 13)", "id": 24876, "lat": 0.015, "lon": 101.0, "alt": 20040.3, "vis": "visible"}],
+  "simulator": "satellite-tracker", "status": "complete"
 }
 ```
