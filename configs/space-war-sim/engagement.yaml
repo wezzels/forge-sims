@@ -1,0 +1,105 @@
+# ASAT Engagement Scenario
+name: "ASAT Engagement"
+description: "DA-ASAT engagement against hostile satellite in LEO with debris modeling"
+duration: 3600
+delta_t: 0.5
+time_scale: 5.0
+
+environment:
+  solar_flux_10: 180
+  kp_index: 5
+  solar_wind_speed: 500
+  j2_enabled: true
+  drag_enabled: true
+
+entities:
+  - id: 100
+    name: "USS Hopper Space Track"
+    category: groundstation
+    side: friendly
+    altitude: 0
+    health: 1.0
+    mass: 0
+    rcs: 0
+
+  - id: 101
+    name: "SBIRS-GEO-1"
+    category: satellite
+    side: friendly
+    semi_major_axis: 42164
+    eccentricity: 0.0001
+    inclination: 0.1
+    altitude: 35786
+    health: 1.0
+    mass: 3000
+    rcs: 15.0
+
+  - id: 102
+    name: "DA-ASAT Battery"
+    category: asat
+    side: friendly
+    altitude: 0
+    health: 1.0
+    mass: 0
+    rcs: 0
+
+  - id: 200
+    name: "Hostile-ISR-7"
+    category: satellite
+    side: hostile
+    semi_major_axis: 6871
+    eccentricity: 0.002
+    inclination: 97.4
+    altitude: 500
+    health: 1.0
+    mass: 800
+    rcs: 3.0
+
+msel:
+  - time: 0
+    type: "scenario_start"
+    target: 0
+    data:
+      message: "ASAT engagement scenario start"
+
+  - time: 300
+    type: "detection"
+    target: 200
+    data:
+      message: "Hostile ISR-7 detected by SBIRS"
+
+  - time: 900
+    type: "track_promoted"
+    target: 200
+    data:
+      message: "Track promoted to confirmed"
+
+  - time: 1200
+    type: "roe_change"
+    target: 0
+    data:
+      message: "ROE: WEAPONS FREE for ASAT engagement"
+
+  - time: 1500
+    type: "engagement"
+    target: 200
+    data:
+      message: "DA-ASAT launched against Hostile-ISR-7"
+
+  - time: 2100
+    type: "weapon_impact"
+    target: 200
+    data:
+      message: "DA-ASAT kinetic kill — Hostile-ISR-7 destroyed"
+
+  - time: 2400
+    type: "debris_created"
+    target: 200
+    data:
+      message: "Debris cloud from ASAT engagement"
+
+  - time: 3600
+    type: "scenario_end"
+    target: 0
+    data:
+      message: "Scenario end"

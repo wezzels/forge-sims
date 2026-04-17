@@ -1,0 +1,156 @@
+# South China Sea Space Domain Scenario
+name: "South China Sea Space Domain"
+description: "Multi-domain space warfare: SSA tracking, ASAT engagement, debris, EW, and constellation defense"
+duration: 7200
+delta_t: 1.0
+time_scale: 10.0
+
+environment:
+  solar_flux_10: 150
+  kp_index: 3
+  solar_wind_speed: 400
+  j2_enabled: true
+  drag_enabled: true
+
+entities:
+  # Friendly satellites
+  - id: 100
+    name: "GPS-IIF-01"
+    category: satellite
+    side: friendly
+    semi_major_axis: 26571
+    eccentricity: 0.001
+    inclination: 55
+    altitude: 20200
+    health: 1.0
+    mass: 2000
+    rcs: 10.0
+
+  - id: 101
+    name: "GPS-IIF-02"
+    category: satellite
+    side: friendly
+    semi_major_axis: 26571
+    eccentricity: 0.001
+    inclination: 55
+    altitude: 20200
+    health: 1.0
+    mass: 2000
+    rcs: 10.0
+
+  - id: 102
+    name: "GEO-Comms-01"
+    category: satellite
+    side: friendly
+    semi_major_axis: 42164
+    eccentricity: 0.0001
+    inclination: 0.1
+    altitude: 35786
+    health: 1.0
+    mass: 5000
+    rcs: 20.0
+
+  - id: 103
+    name: "ISR-LEO-01"
+    category: satellite
+    side: friendly
+    semi_major_axis: 6771
+    eccentricity: 0.001
+    inclination: 51.6
+    altitude: 400
+    health: 1.0
+    mass: 1200
+    rcs: 5.0
+
+  # Hostile satellites
+  - id: 200
+    name: "Hostile-ISR"
+    category: satellite
+    side: hostile
+    semi_major_axis: 6871
+    eccentricity: 0.002
+    inclination: 97.4
+    altitude: 500
+    health: 1.0
+    mass: 800
+    rcs: 3.0
+
+  - id: 201
+    name: "Hostile-Comms"
+    category: satellite
+    side: hostile
+    semi_major_axis: 42164
+    eccentricity: 0.0005
+    inclination: 0.2
+    altitude: 35786
+    health: 1.0
+    mass: 4000
+    rcs: 15.0
+
+  - id: 202
+    name: "Hostile-ASAT-Platform"
+    category: asat
+    side: hostile
+    semi_major_axis: 6871
+    eccentricity: 0.005
+    inclination: 63.4
+    altitude: 500
+    health: 1.0
+    mass: 3000
+    rcs: 8.0
+
+  # Neutral/civilian
+  - id: 300
+    name: "ISS"
+    category: satellite
+    side: civilian
+    semi_major_axis: 6779
+    eccentricity: 0.0003
+    inclination: 51.6
+    altitude: 408
+    health: 1.0
+    mass: 420000
+    rcs: 500.0
+
+msel:
+  - time: 0
+    type: "scenario_start"
+    target: 0
+    data:
+      message: "South China Sea Space Domain scenario start"
+
+  - time: 600
+    type: "sensor_activate"
+    target: 100
+    data:
+      message: "GPS constellation active tracking"
+
+  - time: 1200
+    type: "detection"
+    target: 200
+    data:
+      message: "Hostile ISR satellite detected"
+
+  - time: 1800
+    type: "roe_change"
+    target: 0
+    data:
+      message: "ROE changed to WEAPONS TIGHT"
+
+  - time: 3600
+    type: "close_approach"
+    target: 103
+    data:
+      message: "Hostile ISR close approach to friendly ISR-LEO"
+
+  - time: 5400
+    type: "roe_change"
+    target: 0
+    data:
+      message: "ROE changed to WEAPONS FREE"
+
+  - time: 7200
+    type: "scenario_end"
+    target: 0
+    data:
+      message: "Scenario end"

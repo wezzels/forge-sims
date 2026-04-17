@@ -64,3 +64,17 @@
 - `configs/maritime-sim/` — Scenario configs (scenario.yaml, engagement.yaml)
 
 **Install guide:** [docs/maritime-sim-INSTALL.md](docs/maritime-sim-INSTALL.md)
+
+---
+
+## Space War Sim
+
+| Binary | Source Repo | Platforms | Status |
+|--------|-------------|----------|--------|
+| space-war-sim | [space-war-sim](https://idm.wezzel.com/crab-meat-repos/space-war-sim) | linux-amd64, linux-arm64, darwin-amd64, darwin-arm64, windows-amd64 | ✅ v0.1.0 |
+
+**Additional files:**
+- `space-war-sim_0.1.0-1_amd64.deb` — Debian/Ubuntu package with systemd unit
+- `configs/space-war-sim/` — Scenario configs (scenario.yaml, engagement.yaml)
+
+**Install guide:** [docs/space-war-sim-INSTALL.md](docs/space-war-sim-INSTALL.md)
