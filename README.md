@@ -104,9 +104,15 @@ forge-sims/
 | **bmd-sim-space-weather** | Space Weather Effects | Kp index, scintillation, radar/IR degradation |
 | **bmd-sim-atmospheric** | Atmospheric Propagation | Rain attenuation, refraction, turbulence |
 
----
+## Real-World Simulators
 
-## Installation
+| Binary | Description | Key Features |
+|--------|-------------|-------------|
+| **satellite-tracker** | Live Satellite Tracking | 14 Celestrak groups, Keplerian propagation, NORAD IDs |
+| **space-debris** | Orbital Debris Field | 25K+ objects, collision detection, LEO/MEO/GEO/HIGH |
+| **air-traffic** | Air Traffic Simulation | 40 airports, 17 aircraft types, great-circle routing |
+
+---
 
 ### From Binary (Linux x86_64)
 
@@ -440,6 +446,9 @@ go test -v ./...
 | 5071 | JREAP |
 | 5080 | Space Weather |
 | 5081 | Atmospheric |
+| 5090 | Satellite Tracker |
+| 5091 | Space Debris |
+| 5092 | Air Traffic |
 
 ---
 
@@ -453,7 +462,11 @@ git@idm.wezzel.com:crab-meat-repos/bmd-sim-<name>.git
 
 Replace `<name>` with: sbirs, stss, dsp, uewr, lrdr, cobra-judy, gmd, sm3, sm6, thaad-er, icbm, irbm, hgv, slcm, decoy, jamming, c2bmc, gfcb, ifxb, jrsc, link16, jreap, space-weather, atmospheric
 
+New real-world simulators: satellite-tracker, space-debris, air-traffic
+
 Core library: `git@idm.wezzel.com:crab-meat-repos/bmd-sim-core.git`
+
+Shared CLI: `git@idm.wezzel.com:crab-meat-repos/sim-cli.git`
 
 Integration tests: `git@idm.wezzel.com:crab-meat-repos/bmd-sim-integration.git`
 
@@ -463,8 +476,21 @@ Integration tests: `git@idm.wezzel.com:crab-meat-repos/bmd-sim-integration.git`
 
 | Metric | Value |
 |--------|-------|
-| Total Repos | 26 (25 sims + integration) |
-| Total Tests | ~310 |
-| Total Binaries | 30 |
+| Total Repos | 30 (27 sims + sim-cli + integration + forge-sims + satellite-tracker + space-debris + air-traffic) |
+| Total Tests | ~320 |
+| Total Binaries | 33 |
 | Languages | Go 1.22.2 |
 | Platforms | Linux x86_64, ARM64, macOS, Windows (cross-compile) |
+
+---
+
+## Documentation
+
+| File | Description |
+|------|-------------|
+| [EVALUATION.md](EVALUATION.md) | Full 33-sim evaluation with test results |
+| [ACCURACY.md](ACCURACY.md) | Accuracy assessment, limitations, and improvement roadmap |
+| [NORAD-INTEGRATION.md](NORAD-INTEGRATION.md) | norad.stsgym.com integration guide with examples |
+| [DOCS.md](DOCS.md) | Comprehensive API and usage documentation |
+| [FORGE-SIMS-ROADMAP.md](FORGE-SIMS-ROADMAP.md) | Development roadmap |
+| [scripts/daily-sat-refresh.sh](scripts/daily-sat-refresh.sh) | Daily Celestrak TLE refresh cron |
