@@ -74,6 +74,7 @@ forge-sims/
 | **bmd-sim-icbm** | ICBM Threat | 3-stage, 10,000 km, MIRV deployment, countermeasures |
 | **bmd-sim-irbm** | IRBM Threat | 2-stage, 4,000 km, road-mobile TEL |
 | **bmd-sim-hgv** | Hypersonic Glide Vehicle | Mach 5-25, boost-glide, maneuver scheduler |
+| **maritime-sim** | Maritime Warfare Simulator | WGS84 kinematics, sonar/radar, AI commander, C2/ROE, DIS |
 | **cyber-redteam-sim** | Cyber Red Team Simulator | 45+ MITRE ATT&CK techniques, probabilistic outcomes, defense modeling, C2, AAR |
 
 ### 🟡 Countermeasures & EW

@@ -1,0 +1,77 @@
+name: "South China Sea ASW Scenario"
+description: "DDG conducts ASW patrol against diesel submarine in littoral waters"
+duration: 7200
+delta_t: 0.1
+time_scale: 1.0
+
+environment:
+  wind_speed: 8.0
+  wind_direction: 225.0
+  wave_height: 1.5
+  wave_period: 6.0
+  wave_direction: 210.0
+  current_speed: 0.5
+  current_dir: 180.0
+  water_temp: 28.0
+  salinity: 34.5
+  air_temp: 31.0
+  sea_state: 3
+  visibility: 15.0
+  bottom_depth: 0     # auto: from bathymetry
+  bottom_type: "sand"
+
+entities:
+  - id: 1
+    name: "USS Halsey (DDG-97)"
+    class: "Arleigh Burke"
+    category: "surface"
+    lat: 18.5
+    lon: 114.0
+    alt: 0.0
+    heading: 180.0
+    speed: 6.17
+    threat_level: "friendly"
+
+  - id: 2
+    name: "Kilo-class SSK"
+    class: "Project 877"
+    category: "submarine"
+    lat: 18.3
+    lon: 113.8
+    alt: -80.0
+    heading: 350.0
+    speed: 2.57
+    threat_level: "hostile"
+
+  - id: 3
+    name: "MV Pacific Star"
+    class: "Container Ship"
+    category: "merchant"
+    lat: 18.6
+    lon: 114.2
+    alt: 0.0
+    heading: 45.0
+    speed: 8.23
+    threat_level: "neutral"
+
+msel:
+  - time: 0
+    type: "scenario_start"
+    target: 0
+    data: "ASW patrol begins"
+  - time: 300
+    type: "sensor_activation"
+    target: 1
+    data: "SQS-53C active sonar ping"
+  - time: 600
+    type: "detection"
+    target: 2
+    data: "Passive contact bearing 190"
+  - time: 1200
+    type: "weapon_ready"
+    target: 1
+    data: "Mk 54 torpedo ready"
+  - time: 3600
+    type: "scenario_end"
+    target: 0
+    data: "ASW patrol complete"

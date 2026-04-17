@@ -1,0 +1,77 @@
+name: "South China Sea ASW Engagement"
+description: "DDG detects, classifies, and engages hostile submarine in littoral waters. Demonstrates full kill chain: detection → track → classify → ROE change → weapon engagement."
+duration: 3600
+delta_t: 0.1
+time_scale: 1.0
+
+environment:
+  wind_speed: 8.0
+  wind_direction: 225.0
+  wave_height: 1.5
+  wave_period: 6.0
+  wave_direction: 210.0
+  current_speed: 0.5
+  current_dir: 180.0
+  water_temp: 28.0
+  salinity: 34.5
+  air_temp: 31.0
+  sea_state: 3
+  visibility: 15.0
+  bottom_depth: 0     # auto: from bathymetry
+  bottom_type: "sand"
+
+entities:
+  - id: 1
+    name: "USS Halsey (DDG-97)"
+    class: "Arleigh Burke"
+    category: "surface"
+    lat: 18.50
+    lon: 114.00
+    alt: 0.0
+    heading: 0.0      # heading north to patrol
+    speed: 6.17       # 12 kts
+    threat_level: "friendly"
+
+  - id: 2
+    name: "Kilo-class SSK"
+    class: "Project 877"
+    category: "submarine"
+    lat: 18.40         # only 11 km south of DDG
+    lon: 113.95        # slightly west
+    alt: -60.0          # at periscope depth
+    heading: 10.0       # heading NNE toward DDG
+    speed: 2.57         # 5 kts (quiet)
+    threat_level: "hostile"
+
+  - id: 3
+    name: "MV Pacific Star"
+    class: "Container Ship"
+    category: "merchant"
+    lat: 18.55
+    lon: 114.30
+    alt: 0.0
+    heading: 225.0     # SW
+    speed: 8.23
+    threat_level: "neutral"
+
+msel:
+  - time: 0
+    type: "scenario_start"
+    target: 0
+    data: "ASW engagement begins"
+  - time: 30
+    type: "sensor_activation"
+    target: 1
+    data: "SQS-53C active sonar ping"
+  - time: 120
+    type: "roe_change"
+    target: 1
+    data: "ROE shifted to WEAPONS TIGHT — hostile submarine confirmed"
+  - time: 300
+    type: "communication"
+    target: 1
+    data: "Command authorization: engage hostile submarine"
+  - time: 3600
+    type: "scenario_end"
+    target: 0
+    data: "ASW engagement complete"

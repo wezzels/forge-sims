@@ -50,3 +50,17 @@
 - `configs/cyber-redteam-sim/*.yaml` — Scenario configs (enterprise-ad, dmz-breach, cloud-kill-chain, apt-persistence)
 
 **Install guide:** [docs/cyber-redteam-sim-INSTALL.md](docs/cyber-redteam-sim-INSTALL.md)
+
+---
+
+## Maritime Sim
+
+| Binary | Source Repo | Platforms | Status |
+|--------|-------------|----------|--------|
+| maritime-sim | [maritime-sim](https://idm.wezzel.com/crab-meat-repos/maritime-sim) | linux-amd64, linux-arm64, darwin-amd64, darwin-arm64, windows-amd64 | ✅ v0.1.0 |
+
+**Additional files:**
+- `maritime-sim_0.1.0-1_amd64.deb` — Debian/Ubuntu package with systemd unit
+- `configs/maritime-sim/` — Scenario configs (scenario.yaml, engagement.yaml)
+
+**Install guide:** [docs/maritime-sim-INSTALL.md](docs/maritime-sim-INSTALL.md)
