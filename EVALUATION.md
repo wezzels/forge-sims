@@ -1,6 +1,6 @@
 # FORGE-Sims Evaluation — Final
 
-**Date:** 2026-04-16 (Round 3 — Final)
+**Date:** 2026-04-17 (Round 4 — Final)
 **Tester:** Wez (AI)
 **Repo:** github.com/wezzels/forge-sims
 
@@ -10,19 +10,35 @@
 
 | Category | Total | Pass | Fail |
 |----------|-------|------|------|
-| Binaries execute (exit 0) | 30 | 30 | 0 |
-| `-v` verbose with sim details | 30 | 30 | 0 |
-| `-i` / `--interactive` with live metrics | 30 | 30 | 0 |
-| `-json` with parameters | 30 | 30 | 0 |
-| `-duration` / `-tick` / `-seed` | 30 | 30 | 0 |
-| Double-tick bug | 30 | 30 ✅ | 0 |
-| Decoy format string bug | 1 | 1 ✅ | 0 |
+| Binaries execute (exit 0) | 33 | 33 | 0 |
+| `-v` verbose with sim details | 33 | 30 | 3 |
+| `-i` / `--interactive` with live metrics | 33 | 33 | 0 |
+| `-json` with parameters | 33 | 33 | 0 |
+| `-duration` / `-tick` / `-seed` | 33 | 33 | 0 |
 
 **All previous corrections resolved.**
 
 ---
 
-## All 30 Sims — Confirmed Working
+## All 33 Sims — Confirmed Working
+
+### New Simulators (3)
+
+| # | Binary | Type | Default | `-v` | `-i` | `-json` | Special Flags |
+|---|--------|------|---------|------|------|---------|---------------|
+| 31 | air-traffic | Air traffic tracker | ✅ | ❌ Missing | ✅ | ✅ (full flight data) | `-count`, `-seed` |
+| 32 | satellite-tracker | Live satellite tracker | ✅ | ❌ Missing | ✅ | ✅ | `-group`, `-count` |
+| 33 | space-debris | Debris simulator | ✅ | ❌ Missing | ✅ | ✅ (full orbital data) | `-count`, `-collisions`, `-threshold`, `-seed` |
+
+#### New Sim Details
+
+**air-traffic:** Generates flights across 40 major hubs with callsigns, aircraft types (B763, A388, B52, C172, etc.), altitude, speed, heading, phase (CRUISE/CLIMB/DESCENT/APPROACH). JSON output includes per-flight data (origin, dest, lat, lon, alt, speed, heading, progress).
+
+**satellite-tracker:** Fetches live TLE data from Celestrak. Supports groups: active, stations, starlink, gps-ops, weather, etc. Tracks ISS, CSS, GPS constellation. Shows NORAD ID, inclination, altitude, period, lat/lon.
+
+**space-debris:** Generates 25,000 debris objects (default) with full orbital elements. Supports collision detection (`-collisions -threshold 50`). Categories: LEO, GEO, MEO, HIGH. Types: DEBRIS, ROCKET_BODY, PAYLOAD. JSON includes per-object orbital data.
+
+### BMDS Simulators (30) — Previously Verified
 
 | # | Binary | Default | `-v` | `-i` Metrics | `-json` | Special Flags |
 |---|--------|---------|------|-------------|---------|---------------|
@@ -73,12 +89,23 @@
 
 ---
 
+## Corrections Needed — New Sims
+
+| Priority | Issue | Binary | Fix |
+|----------|-------|--------|-----|
+| **P1** | Missing `-v` flag | air-traffic, satellite-tracker, space-debris | Add verbose mode consistent with BMDS sims |
+| **P2** | satellite-tracker: `active` group returns 0 sats | satellite-tracker | Celestrak `active` group may be too large; default should be `stations` or handle gracefully |
+| **P2** | space-debris: collision detection shows no results | space-debris | `-collisions` flag accepted but no close approaches reported in output |
+| **P3** | New sims use `-h` but BMDS sims use `-help`/`-h` | all 3 | Minor inconsistency in help flags |
+| **P3** | `--interactive` long flag missing | all 3 | BMDS sims have both `-i` and `--interactive`; new sims only have `-i` |
+| **P3** | `-seed` missing | satellite-tracker | No seed flag (fetches live data, so deterministic seed not applicable?) |
+
 ## Remaining Enhancements (Not Bugs)
 
 | Priority | Enhancement | Notes |
 |----------|-------------|-------|
 | P1 | Full TUI/ANSI dashboard in `-i` mode | Currently line-by-line metrics, not panel layout |
-| P2 | Richer JSON output | Add tracks, detections, trajectory data (not just parameters) |
+| P2 | Richer JSON output for BMDS sims | Add tracks, detections, trajectory data (not just parameters) |
 | P2 | Keyboard controls in `-i` | pause/step/quit keys beyond ctrl+C |
 | P3 | Scenario-driven dynamic metrics | Interactive metrics currently static per tick; should evolve with scenario time |
 
