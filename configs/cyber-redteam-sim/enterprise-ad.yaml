@@ -1,0 +1,257 @@
+name: "Enterprise AD Compromise"
+description: "Red team attacks a corporate network with Active Directory. Objective: domain admin."
+duration: 3600
+tick_interval: 60
+maturity_level: 1  # Intermediate: SIEM + basic EDR
+red_team_objective: "domain-admin"
+
+hosts:
+  - id: web-server
+    hostname: web01.corp.local
+    ips: ["10.0.0.10"]
+    os: "ubuntu-22.04"
+    arch: "x86_64"
+    role: "server"
+    zone: "dmz"
+    patch_level: 0.6
+    hardening_level: 0.4
+    edr_level: 1
+    av_level: 1
+    log_level: 2
+    services:
+      - name: nginx
+        port: 443
+        protocol: tcp
+        version: "1.18.0"
+        banner: "nginx/1.18.0"
+        auth_required: false
+      - name: ssh
+        port: 22
+        protocol: tcp
+        version: "OpenSSH 8.2p1"
+        banner: "SSH-2.0-OpenSSH_8.2p1"
+        auth_required: true
+    vulnerabilities:
+      - cve: "CVE-2023-44487"
+        cvss: 7.5
+        exploit_available: true
+        exploit_reliability: 0.8
+        attack_complexity: "low"
+        privilege_required: "none"
+        user_interaction: false
+        remediated: false
+        attack_technique: "T1190"
+    credentials:
+      - username: "www-data"
+        password: "www-data"
+        privilege: "user"
+        source: "local"
+
+  - id: file-server
+    hostname: fs01.corp.local
+    ips: ["10.0.1.20"]
+    os: "windows-server-2022"
+    arch: "x86_64"
+    role: "server"
+    zone: "internal"
+    patch_level: 0.7
+    hardening_level: 0.5
+    edr_level: 2
+    av_level: 2
+    log_level: 2
+    services:
+      - name: smb
+        port: 445
+        protocol: tcp
+        version: "SMB 3.1.1"
+        auth_required: true
+      - name: rdp
+        port: 3389
+        protocol: tcp
+        version: "RDP 10.0"
+        auth_required: true
+    credentials:
+      - username: "svc-backup"
+        password: "Backup@2024!"
+        privilege: "admin"
+        source: "ad"
+
+  - id: dc01
+    hostname: dc01.corp.local
+    ips: ["10.0.1.5"]
+    os: "windows-server-2022"
+    arch: "x86_64"
+    role: "dc"
+    zone: "internal"
+    patch_level: 0.9
+    hardening_level: 0.8
+    edr_level: 3
+    av_level: 2
+    log_level: 3
+    services:
+      - name: ldap
+        port: 389
+        protocol: tcp
+        version: "Active Directory LDAP"
+        auth_required: true
+      - name: kerberos
+        port: 88
+        protocol: tcp
+        version: "Kerberos V5"
+        auth_required: true
+      - name: smb
+        port: 445
+        protocol: tcp
+        version: "SMB 3.1.1"
+        auth_required: true
+      - name: dns
+        port: 53
+        protocol: tcp
+        version: "Microsoft DNS"
+        auth_required: false
+    credentials:
+      - username: "krbtgt"
+        hash: "aes256:0e..."
+        hash_type: "kerberos"
+        privilege: "system"
+        source: "kerberos"
+      - username: "DOMAIN ADMIN"
+        password: "Ch@ng3M3N0w!"
+        privilege: "domain-admin"
+        source: "ad"
+
+  - id: ws01
+    hostname: ws01.corp.local
+    ips: ["10.0.2.100"]
+    os: "windows-11"
+    arch: "x86_64"
+    role: "workstation"
+    zone: "internal"
+    patch_level: 0.5
+    hardening_level: 0.2
+    edr_level: 2
+    av_level: 2
+    log_level: 2
+    services:
+      - name: smb
+        port: 445
+        protocol: tcp
+        auth_required: true
+      - name: wmi
+        port: 135
+        protocol: tcp
+        auth_required: true
+    credentials:
+      - username: "jsmith"
+        password: "Summer2024!"
+        privilege: "user"
+        source: "ad"
+
+  - id: db-server
+    hostname: db01.corp.local
+    ips: ["10.0.1.30"]
+    os: "ubuntu-22.04"
+    arch: "x86_64"
+    role: "server"
+    zone: "internal"
+    patch_level: 0.4
+    hardening_level: 0.3
+    edr_level: 1
+    av_level: 1
+    log_level: 1
+    services:
+      - name: mysql
+        port: 3306
+        protocol: tcp
+        version: "MySQL 8.0.35"
+        auth_required: true
+      - name: ssh
+        port: 22
+        protocol: tcp
+        version: "OpenSSH 8.9"
+        auth_required: true
+    vulnerabilities:
+      - cve: "CVE-2023-21784"
+        cvss: 8.1
+        exploit_available: true
+        exploit_reliability: 0.9
+        attack_complexity: "low"
+        privilege_required: "none"
+        user_interaction: false
+        remediated: false
+        attack_technique: "T1190"
+    credentials:
+      - username: "root"
+        password: "toor"
+        privilege: "admin"
+        source: "local"
+
+links:
+  - id: dmz-to-internal
+    source: web-server
+    destination: file-server
+    bandwidth_mbps: 1000
+    latency_ms: 1
+    protocols: ["tcp"]
+    firewall_rules:
+      - action: allow
+        source: "10.0.0.10"
+        destination: "10.0.1.20"
+        port: 445
+        protocol: tcp
+      - action: deny
+        source: "10.0.0.10"
+        destination: "10.0.1.0/24"
+        protocol: any
+
+  - id: internal-mesh
+    source: file-server
+    destination: dc01
+    bandwidth_mbps: 10000
+    latency_ms: 0.5
+    protocols: ["tcp", "udp"]
+
+  - id: ws-to-internal
+    source: ws01
+    destination: file-server
+    bandwidth_mbps: 1000
+    latency_ms: 1
+    protocols: ["tcp"]
+
+  - id: ws-to-dc
+    source: ws01
+    destination: dc01
+    bandwidth_mbps: 10000
+    latency_ms: 0.5
+    protocols: ["tcp", "udp"]
+
+  - id: db-to-dc
+    source: db-server
+    destination: dc01
+    bandwidth_mbps: 10000
+    latency_ms: 0.5
+    protocols: ["tcp"]
+
+domains:
+  - name: "corp.local"
+    netbios: "CORP"
+    controllers: ["dc01"]
+    users:
+      - username: "jsmith"
+        groups: ["Domain Users"]
+        admin_count: false
+        enabled: true
+      - username: "DOMAIN ADMIN"
+        groups: ["Domain Admins", "Enterprise Admins"]
+        admin_count: true
+        enabled: true
+      - username: "svc-backup"
+        groups: ["Domain Users", "Backup Operators"]
+        admin_count: false
+        enabled: true
+        spn: "backup/fs01.corp.local"
+    groups:
+      - name: "Domain Admins"
+        members: ["DOMAIN ADMIN"]
+      - name: "Domain Users"
+        members: ["jsmith", "svc-backup"]

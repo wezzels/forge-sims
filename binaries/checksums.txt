@@ -1,0 +1,5 @@
+9a7bbfcc27f741bfb86b706ecc659e12861a3aa8ab041ee069094bb134206cc9  cyber-redteam-sim-0.2.0-darwin-amd64.tar.gz
+ab5823ca510363de78118faf931d7e2a57a4d845c3372cf60270d96cb3d49ca1  cyber-redteam-sim-0.2.0-darwin-arm64.tar.gz
+35c711dd1d676217ef5109ad50ce39876b2a1f0564320d3a9ea4d8c970a24db0  cyber-redteam-sim-0.2.0-linux-amd64.tar.gz
+cbbbbf87760f279535e294c8d207a782f271b03fb0d8221c0d3b45979158a5b4  cyber-redteam-sim-0.2.0-linux-arm64.tar.gz
+b55080d207fd31983541dbf73df03e4d39c4f309da78eef50514dae16cc86b4c  cyber-redteam-sim-0.2.0-windows-amd64.zip

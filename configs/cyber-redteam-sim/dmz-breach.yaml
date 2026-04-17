@@ -1,0 +1,63 @@
+# DMZ Breach
+name: "DMZ Breach"
+description: "Red team breaches DMZ web app and pivots to internal network."
+duration: 1800
+tick_interval: 30
+maturity_level: 3
+red_team_objective: "data-exfiltration"
+
+hosts:
+  - id: "web-proxy"
+    hostname: "proxy01.dmz.local"
+    ips: ["172.16.1.10"]
+    os: "linux"
+    role: "proxy"
+    zone: "dmz"
+    patch_level: 0.8
+    edr_level: 2
+    services:
+      - name: "https"
+        port: 443
+        version: "nginx/1.25"
+
+  - id: "web-app"
+    hostname: "app01.dmz.local"
+    ips: ["172.16.1.20"]
+    os: "linux"
+    role: "web-server"
+    zone: "dmz"
+    patch_level: 0.5
+    edr_level: 1
+    services:
+      - name: "http"
+        port: 8080
+        version: "Spring Boot 3.1"
+        vulnerabilities:
+          - cve: "CVE-2023-20863"
+            exploit_prob: 0.8
+            severity: "critical"
+
+  - id: "db-internal"
+    hostname: "db01.int.local"
+    ips: ["10.0.2.10"]
+    os: "linux"
+    role: "database"
+    zone: "internal"
+    patch_level: 0.9
+    edr_level: 3
+    services:
+      - name: "postgresql"
+        port: 5432
+        version: "15.4"
+
+  - id: "backup-srv"
+    hostname: "bkp01.int.local"
+    ips: ["10.0.2.20"]
+    os: "windows"
+    role: "file-server"
+    zone: "internal"
+    patch_level: 0.6
+    edr_level: 2
+    services:
+      - name: "smb"
+        port: 445

@@ -36,3 +36,17 @@
 | bmd-sim-uewr | bmd-sim-uewr | ✅ New |
 
 **Total: 30 binaries (7 pre-existing + 23 new)**
+---
+
+## Cyber Red Team Simulator
+
+| Binary | Source Repo | Platforms | Status |
+|--------|-------------|----------|--------|
+| cyber-redteam-sim | [cyber-redteam-sim](https://github.com/wezzels/cyber-redteam-sim) | linux-amd64, linux-arm64, darwin-amd64, darwin-arm64, windows-amd64 | ✅ v0.2.0 |
+
+**Additional files:**
+- `cyber-redteam-sim_0.2.0-1_amd64.deb` — Debian/Ubuntu package with systemd unit
+- `checksums.txt` — SHA256 checksums for all platform binaries
+- `configs/cyber-redteam-sim/*.yaml` — Scenario configs (enterprise-ad, dmz-breach, cloud-kill-chain, apt-persistence)
+
+**Install guide:** [docs/cyber-redteam-sim-INSTALL.md](docs/cyber-redteam-sim-INSTALL.md)

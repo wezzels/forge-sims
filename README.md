@@ -24,7 +24,14 @@ chmod +x binaries/linux-x86/*
 forge-sims/
 ├── binaries/
 │   ├── linux-x86/      # Linux x86_64 binaries ✅
-│   └── linux-arm/      # Linux ARM64 binaries
+│   ├── linux-arm64/    # Linux ARM64 binaries ✅
+│   ├── darwin-amd64/   # macOS Intel binaries ✅
+│   ├── darwin-arm64/   # macOS Apple Silicon binaries ✅
+│   ├── windows-amd64/ # Windows x64 binaries ✅
+│   ├── checksums.txt   # SHA256 checksums
+│   └── cyber-redteam-sim_0.2.0-1_amd64.deb  # Debian package
+├── configs/
+│   └── cyber-redteam-sim/  # Scenario configs
 ├── docker-compose.yml  # Docker Compose for all 25 simulators
 ├── Dockerfile.template  # Common Dockerfile template
 ├── deploy-dockerfiles.sh
@@ -67,6 +74,7 @@ forge-sims/
 | **bmd-sim-icbm** | ICBM Threat | 3-stage, 10,000 km, MIRV deployment, countermeasures |
 | **bmd-sim-irbm** | IRBM Threat | 2-stage, 4,000 km, road-mobile TEL |
 | **bmd-sim-hgv** | Hypersonic Glide Vehicle | Mach 5-25, boost-glide, maneuver scheduler |
+| **cyber-redteam-sim** | Cyber Red Team Simulator | 45+ MITRE ATT&CK techniques, probabilistic outcomes, defense modeling, C2, AAR |
 
 ### 🟡 Countermeasures & EW
 
