@@ -242,3 +242,104 @@ fmt.Printf("Kessler cascade: %.0f new debris over 10 years\n", newDebris)
 - `orbital`: 6 tests (Kepler, Hohmann, J2, velocity, drag, conjunction)
 - `propagator`: 6 tests (RK4, conservation, J2 precession, drag, geodetic)
 - `sgp4`: 6 tests (ISS, LEO, GEO, batch, TLE, deep-space)
+## Constellation Degradation
+
+```go
+import "gitlab.com/crab-meat-repos/space-war-sim/internal/satellite"
+
+// Create a Starlink-like constellation
+cfg := satellite.StarlinkConfig() // 1584 sats, 550 km, 53°
+cs := satellite.NewConstellationState(cfg, 1)
+
+// ASAT attack on 5 satellites
+weapon := asat.DirectAscentASAT()
+targets := []uint64{cs.Satellites[0].ID, cs.Satellites[1].ID, cs.Satellites[2].ID, cs.Satellites[3].ID, cs.Satellites[4].ID}
+events := cs.ASATAttack(weapon, targets, 42)
+
+// Add debris from destroyed satellites
+destroyed := []uint64{}
+for _, sat := range cs.Satellites {
+    if !sat.IsActive && sat.DestroyReason == "asat_hit" {
+        destroyed = append(destroyed, sat.ID)
+    }
+}
+df := debris.NewDebrisField()
+cs.AddDebrisFromAttack(df, destroyed, 42)
+
+// Full degradation simulation (30 days)
+timeline := satellite.SimulateDegradation(cfg, weapon, 10, 86400*30, 42)
+for _, state := range timeline.States {
+    fmt.Printf("T+%.0fs: %d active, coverage=%.1f%%, debris=%d\n",
+        state.Time, state.ActiveSats, state.Coverage*100, state.Debris)
+}
+```
+
+### Predefined Constellations
+
+| Constellation | Altitude | Planes | Sats/Plane | Total | Δv Budget |
+|---------------|----------|--------|------------|-------|------------|
+| Starlink      | 550 km   | 72     | 22         | 1584  | 0.35 km/s  |
+| GPS            | 20200 km | 6      | 5          | 30    | 0.50 km/s  |
+| Iridium        | 780 km   | 6      | 11         | 66    | 0.20 km/s  |
+
+## Covariance Conjunction Analysis
+
+```go
+import "gitlab.com/crab-meat-repos/space-war-sim/internal/ssa"
+
+// ISS vs debris
+iss := ssa.StateVector{X: 6778, Y: 0, Z: 0, XD: 0, YD: 7.67, ZD: 0}
+debris := ssa.StateVector{X: 6778.1, Y: 0.5, Z: 0.2, XD: -0.01, YD: -7.67, ZD: 0.01}
+covP := ssa.TypicalLEOCovariance()
+covS := ssa.TypicalDebrisCovariance()
+
+cfg := ssa.DefaultConjunctionConfig()
+cfg.HardBodyRadius = 0.05 // 50m (ISS is big)
+
+result := ssa.CovarianceConjunction(iss, debris, covP, covS, cfg)
+fmt.Printf("Miss: %.3f km, Pc: %.2e, Severity: %s\n",
+    result.MissDistance, result.Pc, result.Severity)
+```
+
+## Orbital Maneuvers & Collision Avoidance
+
+```go
+import "gitlab.com/crab-meat-repos/space-war-sim/internal/maneuver"
+
+// Hohmann transfer
+plan := maneuver.HohmannRaise(408, 800) // 408→800 km
+fmt.Printf("Δv: %.3f km/s, Time: %.0f s\n", plan.DeltaV, plan.TransferTime)
+
+// Inclination change
+plan := maneuver.PlaneChange(408, 23.1) // 23.1° at 408 km
+fmt.Printf("Δv: %.3f km/s\n", plan.DeltaV)
+
+// Combined maneuver (cheaper than separate)
+plan := maneuver.CombinedManeuver(408, 800, 23.1)
+
+// Collision avoidance
+cam := maneuver.CollisionAvoidance(conjunction, primaryState, 408, 0.1)
+fmt.Printf("CAM: feasible=%v safe=%v Δv=%.4f km/s\n", cam.Feasible, cam.Safe, cam.Maneuver.DeltaV)
+
+// Delta-v budget
+budget := maneuver.NewDeltaVBudget(1.0, 0.1) // 1 km/s total, 0.1 reserve
+fmt.Printf("Available: %.3f km/s\n", budget.Available())
+
+// Fuel mass (Tsiolkovsky)
+fuel := maneuver.FuelMass(0.1, 2.94, 8000) // 100 m/s, Isp 300s, 8000 kg dry
+```
+
+## Test Coverage
+
+98 tests across 10 packages:
+
+- `asat`: 12 tests (Monte Carlo, weapon types, inventory, debris)
+- `atm`: 11 tests (NRLMSISE-00, solar flux, Kp, drag, pressure)
+- `core`: 9 integration tests (full engagement chain, cross-package consistency)
+- `debris`: 10 tests (NASA breakup, Kessler cascade, density, decay)
+- `maneuver`: 11 tests (Hohmann, plane change, combined, CAM, delta-v, fuel mass)
+- `orbital`: 6 tests (Kepler, Hohmann, J2, velocity, drag, conjunction)
+- `propagator`: 6 tests (RK4, conservation, J2 precession, drag, geodetic)
+- `satellite`: 10 tests (Starlink/GPS/Iridium, ASAT attack, debris cascade, coverage)
+- `sgp4`: 6 tests (ISS, LEO, GEO, batch, TLE, deep-space)
+- `ssa`: 11 tests (covariance conjunction, B-plane, severity, batch analysis)
