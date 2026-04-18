@@ -330,3 +330,50 @@ server {
     }
 }
 ```
+---
+
+## Tactical Network Simulation API
+
+### Endpoints
+
+| Endpoint | Auth | Description |
+|----------|------|-------------|
+| `GET /api/tactical-net` | API Key or Session | Run tactical network simulation |
+| `GET /api/public/tactical-net` | None | Run tactical network simulation (public) |
+
+### Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `scenario` | `single-launch` | Scenario: `single-launch`, `multi-axis`, `hypersonic-glide`, `nuclear-exchange` |
+| `jammers` | `0` | Number of EW jammers (0-10) |
+| `terrain` | `flat` | Terrain: `flat`, `hills`, `mountains`, `maritime` |
+| `duct` | `none` | Atmospheric ducting: `none`, `evaporation`, `surface`, `elevated` |
+| `rain` | `0` | Rain rate in mm/hr |
+
+### Example
+
+```bash
+curl -s -H "X-API-Key: norad-forge-api-2026" \
+  "https://norad.stsgym.com/api/tactical-net?scenario=nuclear-exchange&jammers=5&terrain=mountains&rain=10" | jq '.statistics'
+```
+
+### Response Fields
+
+- `statistics.total_links` - Total network links
+- `statistics.links_up` - Links with positive margin
+- `statistics.links_degraded` - Links with margin 0-10 dB
+- `statistics.links_down` - Links below threshold
+- `statistics.avg_latency_ms` - Average link latency
+- `statistics.total_throughput_kbps` - Total network throughput
+- `links[]` - Per-link details (from, to, radio, margin, throughput, latency, status)
+- `nodes[]` - Per-node details (id, type, connected links, radio health)
+
+### NORAD UI
+
+The NORAD Command Center map includes a **⊞ TACT-NET** button that:
+1. Prompts for scenario and jammer count
+2. Runs the tactical-net simulation
+3. Renders up/degraded links as polylines on the Leaflet map
+4. Shows node health as colored circle markers
+5. Displays aggregate statistics
