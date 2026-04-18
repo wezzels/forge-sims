@@ -1,93 +1,125 @@
 # Space War Sim — Installation Guide
 
-## Overview
-
-Space War Sim is a high-fidelity space domain warfare simulation engine modeling orbital mechanics, SSA tracking, ASAT weapons, debris fields, electronic warfare, C2/ROE, and ground station link budgets.
-
-**Binary:** `space-war-sim`
-**Version:** 0.1.0
-**License:** MIT
-**Platforms:** Linux (amd64/arm64), macOS (Intel/ARM), Windows (amd64)
-
----
-
 ## Quick Start
 
+### Linux (amd64)
+
 ```bash
+# Download and extract
+curl -L https://github.com/wezzels/forge-sims/raw/main/binaries/linux-x86/space-war-sim -o space-war-sim
 chmod +x space-war-sim
-./space-war-sim --version
-./space-war-sim --init
-./space-war-sim --config configs/scenario.yaml
+sudo mv space-war-sim /usr/local/bin/
+
+# Or install via .deb
+curl -L https://github.com/wezzels/forge-sims/raw/main/binaries/space-war-sim_0.1.0-1_amd64.deb -o space-war-sim.deb
+sudo dpkg -i space-war-sim.deb
 ```
 
----
+### Linux (arm64)
 
-## Installation by Platform
-
-### Linux (.deb)
 ```bash
-sudo dpkg -i space-war-sim_0.1.0-1_amd64.deb
+curl -L https://github.com/wezzels/forge-sims/raw/main/binaries/linux-arm64/space-war-sim -o space-war-sim
+chmod +x space-war-sim
+sudo mv space-war-sim /usr/local/bin/
+```
+
+### macOS (Intel)
+
+```bash
+curl -L https://github.com/wezzels/forge-sims/raw/main/binaries/darwin-amd64/space-war-sim -o space-war-sim
+chmod +x space-war-sim
+sudo mv space-war-sim /usr/local/bin/
+```
+
+### macOS (Apple Silicon)
+
+```bash
+curl -L https://github.com/wezzels/forge-sims/raw/main/binaries/darwin-arm64/space-war-sim -o space-war-sim
+chmod +x space-war-sim
+sudo mv space-war-sim /usr/local/bin/
+```
+
+### Windows
+
+```powershell
+# Download
+Invoke-WebRequest -Uri https://github.com/wezzels/forge-sims/raw/main/binaries/windows-amd64/space-war-sim.exe -OutFile space-war-sim.exe
+
+# Add to PATH or run directly
+.\space-war-sim.exe --help
+```
+
+## Build from Source
+
+### Prerequisites
+
+- Go 1.21 or later
+- Git
+
+### Steps
+
+```bash
+git clone https://idm.wezzel.com/crab-meat-repos/space-war-sim.git
+cd space-war-sim
+
+# Build
+go build -o space-war-sim ./cmd/sim
+
+# Run tests
+go test ./... -v
+
+# Install
+go install ./cmd/sim
+```
+
+### Cross-compile
+
+```bash
+# Linux amd64
+GOOS=linux GOARCH=amd64 go build -o dist/space-war-sim ./cmd/sim
+
+# macOS arm64
+GOOS=darwin GOARCH=arm64 go build -o dist/space-war-sim ./cmd/sim
+
+# Windows
+GOOS=windows GOARCH=amd64 go build -o dist/space-war-sim.exe ./cmd/sim
+```
+
+## Verify Installation
+
+```bash
+space-war-sim --version
+# space-war-sim v0.1.0 (commit: <hash>, built: <date>)
+
+# Health check
 space-war-sim --doctor
+
+# Initialize sample configs
+space-war-sim --init
+
+# Run a scenario
+space-war-sim --config configs/scenario.yaml --aar results.json
 ```
 
-### Linux/macOS (tar.gz)
-```bash
-tar xzf space-war-sim-0.1.0-linux-amd64.tar.gz
-sudo ./install.sh
+## Docker
+
+```dockerfile
+FROM golang:1.21-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o space-war-sim ./cmd/sim
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+COPY --from=builder /app/space-war-sim /usr/local/bin/
+ENTRYPOINT ["space-war-sim"]
 ```
-
-### macOS (launchd)
-```bash
-sudo ./install.sh
-sudo launchctl load -w /Library/LaunchDaemons/com.spacewarsim.plist
-```
-
-### Windows
-```powershell
-.\install.bat    # Run as Administrator
-```
-
----
-
-## CLI Reference
-
-| Flag | Description |
-|------|-------------|
-| `--config PATH` | Scenario config file (default: `configs/scenario.yaml`) |
-| `--aar PATH` | AAR JSON export path |
-| `--web ADDR` | Web UI address |
-| `--version` | Print version, commit, build date, OS/arch |
-| `--doctor` | Health check diagnostics |
-| `--init` | Create config directory with sample scenarios |
-| `--validate PATH` | Validate a scenario config file |
-| `--list-scenarios` | List available scenario files |
-
----
-
-## Removal
-
-### Linux (.deb)
-```bash
-sudo dpkg -r space-war-sim
-sudo rm -rf /etc/space-war-sim /var/lib/space-war-sim  # optional
-```
-
-### Linux/macOS
-```bash
-sudo ./uninstall.sh
-```
-
-### Windows
-```powershell
-.\uninstall.bat    # Run as Administrator
-```
-
----
 
 ## Troubleshooting
 
-```bash
-space-war-sim --init          # Create configs if missing
-space-war-sim --doctor        # Check installation
-space-war-sim --validate configs/scenario.yaml  # Validate scenario
-```
+| Issue | Solution |
+|-------|----------|
+| `Permission denied` | `chmod +x space-war-sim` |
+| `command not found` | Add to PATH or use full path |
+| Config not found | Run `space-war-sim --init` |
+| Port conflicts | Check `configs/scenario.yaml` for port settings |
