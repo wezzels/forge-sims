@@ -1,100 +1,54 @@
 # Space War Sim
 
-High-fidelity space domain warfare simulation engine.
+High-fidelity orbital warfare simulation engine with SGP4 propagation, Monte Carlo ASAT engagement, NASA breakup debris modeling, covariance conjunction analysis, and constellation degradation simulation.
 
 ## Quick Install
 
-### Linux (Debian/Ubuntu)
 ```bash
-sudo dpkg -i space-war-sim_0.1.0-1_amd64.deb
-space-war-sim --version
+# Linux amd64
+curl -L https://github.com/wezzels/forge-sims/raw/main/binaries/linux-x86/space-war-sim -o space-war-sim
+chmod +x space-war-sim && sudo mv space-war-sim /usr/local/bin/
+
+# Or .deb package
+curl -L https://github.com/wezzels/forge-sims/raw/main/binaries/space-war-sim_0.1.0-1_amd64.deb -o space-war-sim.deb
+sudo dpkg -i space-war-sim.deb
 ```
 
-### macOS / Linux (tar.gz)
-```bash
-tar xzf space-war-sim-0.1.0-linux-amd64.tar.gz
-sudo ./install.sh
-```
+See [INSTALL.md](docs/space-war-sim-INSTALL.md) for macOS, Windows, and build-from-source.
 
-### Windows
-Extract the `.zip` and run `install.bat` as Administrator.
+## Documentation
 
-## Usage
+- [INSTALL.md](docs/space-war-sim-INSTALL.md) — Installation for all platforms
+- [USAGE.md](docs/space-war-sim-USAGE.md) — CLI reference, Go API examples, all packages
+- [CHANGELOG.md](docs/space-war-sim-CHANGELOG.md) — Version history
 
-```bash
-# Run a simulation
-space-war-sim --config configs/scenario.yaml
+## Capabilities
 
-# With web UI
-space-war-sim --config configs/scenario.yaml --web :8080
+| Package | Description | Tests |
+|---------|-------------|-------|
+| `sgp4` | SGP4/SDP4 orbit propagation from TLE data | 6 |
+| `propagator` | RK4 numerical integrator (J2/J3/J4 + drag) | 6 |
+| `atm` | NRLMSISE-00 atmospheric density (solar flux, Kp) | 11 |
+| `asat` | Monte Carlo ASAT engagement (5 weapon types) | 12 |
+| `debris` | NASA Standard Breakup Model + Kessler syndrome | 10 |
+| `ssa` | Covariance conjunction analysis (Akella-Alfriend) | 11 |
+| `maneuver` | Orbital maneuvers + collision avoidance | 11 |
+| `satellite` | Constellation degradation (Starlink/GPS/Iridium) | 10 |
+| `orbital` | Keplerian mechanics, Hohmann, J2, phasing | 6 |
+| `core` | Engine, event bus, scenario loading | 9 |
+| **Total** | **11 packages** | **104** |
 
-# Export AAR
-space-war-sim --config configs/scenario.yaml --aar results.json
+## Binaries
 
-# Health check
-space-war-sim --doctor
+| Platform | Binary | Size |
+|----------|--------|------|
+| Linux amd64 | `binaries/linux-x86/space-war-sim` | 3.5 MB |
+| Linux arm64 | `binaries/linux-arm64/space-war-sim` | 3.4 MB |
+| macOS Intel | `binaries/darwin-amd64/space-war-sim` | 3.5 MB |
+| macOS ARM | `binaries/darwin-arm64/space-war-sim` | 3.4 MB |
+| Windows | `binaries/windows-amd64/space-war-sim.exe` | 3.6 MB |
+| Debian/Ubuntu | `binaries/space-war-sim_0.1.0-1_amd64.deb` | 1.9 MB |
 
-# Initialize configs
-space-war-sim --init
+## Web UI
 
-# Validate scenario
-space-war-sim --validate configs/scenario.yaml
-
-# List scenarios
-space-war-sim --list-scenarios
-
-# Print version
-space-war-sim --version
-```
-
-## CLI Reference
-
-| Flag | Description |
-|------|-------------|
-| `--config PATH` | Scenario config file (default: `configs/scenario.yaml`) |
-| `--aar PATH` | AAR JSON export path |
-| `--web ADDR` | Web UI address (e.g. `:8080`) |
-| `--version` | Print version, commit, build date, OS/arch |
-| `--doctor` | Run health check diagnostics |
-| `--init` | Create config directory with sample scenarios |
-| `--validate PATH` | Validate a scenario config file |
-| `--list-scenarios` | List available scenario files |
-
-## Packages
-
-| Package | Description |
-|---------|-------------|
-| `internal/core` | Engine, event bus, config loading, orbital state |
-| `internal/orbital` | Keplerian mechanics, J2 perturbation, Hohmann transfers, conjunction analysis |
-| `internal/ssa` | Space situational awareness, tracking, sensor models |
-| `internal/asat` | ASAT weapons (DA-ASAT, co-orbital, laser, EMP), engagement, debris generation |
-| `internal/debris` | Debris field modeling, fragmentation events, Kessler syndrome |
-| `internal/ew` | Electronic warfare (jamming, spoofing, link disruption) |
-| `internal/c2` | C2/ROE engine, space tasking orders |
-| `internal/groundstation` | Ground station tracking, pass windows, link budgets |
-| `internal/satellite` | Satellite platforms (LEO, MEO, GEO, constellations) |
-| `internal/scenario` | YAML scenario loading and validation |
-| `internal/aar` | After-action review, recording, JSON export |
-
-## Build from Source
-
-```bash
-make build          # Build for current platform
-make test           # Run all tests
-make dist           # Cross-compile all platforms + package + checksum
-make deb            # Build .deb package
-make docker          # Build Docker image
-make clean           # Remove built binary
-make dist-clean      # Remove entire dist/ directory
-```
-
-## Scenarios
-
-| Scenario | Entities | Duration | Description |
-|----------|----------|----------|-------------|
-| `scenario.yaml` | 8 | 7200s | South China Sea space domain (SSA, ASAT, EW, constellations) |
-| `engagement.yaml` | 4 | 3600s | DA-ASAT engagement with debris modeling |
-
-## License
-
-MIT
+Open `web/tactical.html` in a browser for the dark-theme Leaflet.js tactical display with real-time tracking, constellation status, conjunction alerts, and debris field visualization.
