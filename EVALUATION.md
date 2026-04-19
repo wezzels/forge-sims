@@ -1,194 +1,183 @@
-# FORGE-SIM VERIFICATION REPORT
+# FORGE-Sims Evaluation — Round 6 (Full Audit)
 
-**Date:** 2026-04-19T03:51:28Z UTC  
-**Total Simulators:** 43  
-**Passed:** 43  
-**Failed:** 0  
-**Warnings:** 0
+**Date:** 2026-04-18 (Round 6 — Comprehensive Binary Audit)
+**Tester:** Wez (AI)
+**Repo:** github.com/wezzels/forge-sims
 
 ---
 
-## Executive Summary
+## Overall Status
 
-✅ **ALL 43 SIMULATORS PASSED VERIFICATION**
+| Category | Total | Pass | Fail | Notes |
+|----------|-------|------|------|-------|
+| Binaries execute (exit 0) | 37 | 37 | 0 | All clean |
+| `-v` verbose flag | 37 | 33 | 4 | Missing: gmd, lrdr, cyber-redteam, maritime, space-war |
+| `-i` interactive mode | 37 | 30 | 7 | Missing: gmd, lrdr, tpy2, cyber-redteam, maritime, space-war; 2 print text not JSON (gbr, patriot) |
+| `-json` JSON output | 37 | 28 | 9 | Missing: gmd, lrdr, tpy2, cyber-redteam, maritime, space-war; 3 print text+JSON (aegis, gbr, hub, patriot, thaad) |
+| `-duration`/`-tick` | 37 | 33 | 4 | Missing: gmd, lrdr, tpy2; BMDS uses `5s` format (not int) |
+| `-seed` reproducibility | 37 | 33 | 4 | Missing: gmd, lrdr, cyber-redteam, maritime, space-war |
 
-| Category | Total | Pass | Fail |
-|----------|-------|------|------|
-| BMDS Simulators | 31 | 31 | 0 |
-| Specialized Sims | 12 | 12 | 0 |
-| **TOTAL** | **43** | **43** | **0** |
-
----
-
-## BMDS Simulators (31)
-
-| # | Simulator | Status | Parameters |
-|---|----------|--------|------------|
-| 1 | bmd-sim-aegis | ✅ PASS | 7 |
-| 2 | bmd-sim-atmospheric | ✅ PASS | 4 |
-| 3 | bmd-sim-c2bmc | ✅ PASS | 3 |
-| 4 | bmd-sim-cobra-judy | ✅ PASS | 3 |
-| 5 | bmd-sim-decoy | ✅ PASS | 2 |
-| 6 | bmd-sim-dsp | ✅ PASS | 5 |
-| 7 | bmd-sim-gbr | ✅ PASS | 3 |
-| 8 | bmd-sim-gfcb | ✅ PASS | 2 |
-| 9 | bmd-sim-gmd | ✅ PASS | 12 |
-| 10 | bmd-sim-hgv | ✅ PASS | 12 |
-| 11 | bmd-sim-hub | ✅ PASS | 3 |
-| 12 | bmd-sim-icbm | ✅ PASS | 11 |
-| 13 | bmd-sim-ifxb | ✅ PASS | 3 |
-| 14 | bmd-sim-irbm | ✅ PASS | 12 |
-| 15 | bmd-sim-jamming | ✅ PASS | 2 |
-| 16 | bmd-sim-jreap | ✅ PASS | 2 |
-| 17 | bmd-sim-jrsc | ✅ PASS | 3 |
-| 18 | bmd-sim-link16 | ✅ PASS | 3 |
-| 19 | bmd-sim-lrdr | ✅ PASS | 4 |
-| 20 | bmd-sim-mrbm | ✅ PASS | 13 |
-| 21 | bmd-sim-patriot | ✅ PASS | 5 |
-| 22 | bmd-sim-sbirs | ✅ PASS | 5 |
-| 23 | bmd-sim-slcm | ✅ PASS | 4 |
-| 24 | bmd-sim-sm3 | ✅ PASS | 10 |
-| 25 | bmd-sim-sm6 | ✅ PASS | 11 |
-| 26 | bmd-sim-space-weather | ✅ PASS | 4 |
-| 27 | bmd-sim-stss | ✅ PASS | 5 |
-| 28 | bmd-sim-thaad | ✅ PASS | 3 |
-| 29 | bmd-sim-thaad-er | ✅ PASS | 3 |
-| 30 | bmd-sim-tpy2 | ✅ PASS | 5 |
-| 31 | bmd-sim-uewr | ✅ PASS | 4 |
-
-## Specialized Simulators (12)
-
-| # | Simulator | Status | Data |
-|---|----------|--------|------|
-| 1 | satellite-tracker | ✅ PASS | 5 GPS satellites @ 20,489km |
-| 2 | space-debris | ✅ PASS | 25,000 debris objects |
-| 3 | air-traffic | ✅ PASS | 5,000 flights |
-| 4 | tactical-net | ✅ PASS | 38 nodes, 2,584 links |
-| 5 | kill-assessment | ✅ PASS | pk=0.00 (EKV single-shot) |
-| 6 | wta | ✅ PASS | threat_level=0 |
-| 7 | electronic-war-sim | ✅ PASS | exit=0 |
-| 8 | submarine-war-sim | ✅ PASS | exit=0 |
-| 9 | cyber-redteam-sim | ✅ PASS | doctor_exit=0 |
-| 10 | maritime-sim | ✅ PASS | list_scenarios_exit=0 |
-| 11 | space-war-sim | ✅ PASS | list_scenarios_exit=0 |
-| 12 | *(placeholder)* | ✅ PASS | 0 |
+**37 total entries** (30 BMDS + 3 new space + 4 specialized sims)
 
 ---
 
-## Adding New Simulators
+## Flag Compatibility Matrix
 
-### Step 1: Identify Simulator Type
+| Sim | `-v` | `-i` | `-json` | `-duration` | `-seed` | Notes |
+|-----|------|------|---------|-------------|---------|-------|
+| air-traffic | ✅ | ✅ | ✅ | ✅ (int) | ✅ | Full |
+| satellite-tracker | ✅ | ✅ | ✅ | ✅ (int) | ✅ | Full |
+| space-debris | ✅ | ✅ | ✅ | ✅ (int) | ✅ | Full |
+| tactical-net | ✅ | ✅ | ✅ | ✅ (int) | ✅ | Full |
+| bmd-sim-sbirs | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-stss | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-dsp | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-uewr | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-lrdr | ❌ | ❌ | ❌ | ❌ | ❌ | **Only `-help`** |
+| bmd-sim-cobra-judy | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-tpy2 | ✅ | ❌ | ❌ | ❌ | ❌ | **Missing `-i`, `-json`, `-duration`, `-seed`** |
+| bmd-sim-gbr | ✅ | ✅ | ⚠️ | ✅ (dur) | ✅ | `-json` prints text+JSON mixed |
+| bmd-sim-aegis | ✅ | ✅ | ⚠️ | ✅ (dur) | ✅ | `-json` prints text+JSON mixed |
+| bmd-sim-patriot | ✅ | ✅ | ⚠️ | ✅ (dur) | ✅ | `-json` prints text+JSON mixed |
+| bmd-sim-thaad | ✅ | ✅ | ⚠️ | ✅ (dur) | ✅ | `-json` prints text+JSON mixed |
+| bmd-sim-hub | ✅ | ✅ | ⚠️ | ✅ (dur) | ✅ | `-json` prints text+JSON mixed |
+| bmd-sim-gmd | ❌ | ❌ | ❌ | ❌ | ❌ | **Only `-site`, `-variant`, `-help`** |
+| bmd-sim-sm3 | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-sm6 | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-icbm | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-irbm | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-hgv | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-slcm | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-decoy | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-jamming | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-c2bmc | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-gfcb | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-ifxb | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-jrsc | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-link16 | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-jreap | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-space-weather | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-atmospheric | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| bmd-sim-thaad-er | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Full |
+| cyber-redteam-sim | ❌ | ❌ | ❌ | ❌ | ❌ | **Different CLI model** (config-based) |
+| maritime-sim | ❌ | ❌ | ❌ | ❌ | ❌ | **Different CLI model** (config-based) |
+| space-war-sim | ❌ | ❌ | ❌ | ❌ | ❌ | **Different CLI model** (config-based) |
 
-**BMDS Simulators** — Use standard flags: `-json -duration <Ns> -seed <N>`
-```go
-// Add to bmdSims slice in verifyAllBMDSSims()
-bmdSims := []string{
-    // ... existing
-    "your-new-sim",
-}
+---
+
+## New Issues Found (Round 6)
+
+### P0 — Broken / Missing Core Flags
+
+| # | Binary | Issue | Detail |
+|---|--------|-------|--------|
+| 1 | **bmd-sim-gmd** | Missing all standard flags | Only has `-site`, `-variant`, `-help`. No `-v`, `-i`, `-json`, `-duration`, `-seed`. Completely different CLI from all other BMDS sims. |
+| 2 | **bmd-sim-lrdr** | Missing all standard flags | Only has `-help`. No `-v`, `-i`, `-json`, `-duration`, `-seed`. Outputs text only. |
+| 3 | **bmd-sim-tpy2** | Missing `-i`, `-json`, `-duration`, `-seed` | Has `-v` and `-site`, `-scenario`, but lacks interactive/JSON/duration. |
+
+### P1 — Mixed Text+JSON Output (not valid JSON)
+
+| # | Binary | Issue | Detail |
+|---|--------|-------|--------|
+| 4 | **bmd-sim-aegis** | `-json` prints text banner + JSON | First 6 lines are text, then JSON. Not valid JSON parse. |
+| 5 | **bmd-sim-gbr** | `-json` prints text output, no JSON | `-json` flag accepted but output is plain text. |
+| 6 | **bmd-sim-patriot** | `-json` prints text banner + JSON | Same as aegis — text header then partial JSON. |
+| 7 | **bmd-sim-thaad** | `-json` prints text banner + JSON | Same issue — text header then data. |
+| 8 | **bmd-sim-hub** | `-json` prints text, no JSON | Output is entirely text with no JSON structure. |
+
+### P2 — Duration Format Inconsistency
+
+| # | Issue | Detail |
+|---|-------|--------|
+| 9 | BMDS sims use Go `time.Duration` format | `-duration 5s` works but `-duration 5` fails with parse error. New sims (air-traffic, satellite-tracker, space-debris, tactical-net) use int seconds: `-duration 5`. This is a UX inconsistency. |
+
+### P3 — Specialized Sims (Different CLI Model)
+
+| # | Binary | Issue | Detail |
+|---|--------|-------|--------|
+| 10 | **cyber-redteam-sim** | No standard flags | Uses `-config`, `-doctor`, `-init`, `-no-server`, `-rest-port`, `-version`. No `-v`, `-i`, `-json`, `-duration`, `-seed`. |
+| 11 | **maritime-sim** | No standard flags | Uses `-aar`, `-config`, `-doctor`, `-init`, `-list-scenarios`, `-validate`, `-version`, `-web`. No standard flags. |
+| 12 | **space-war-sim** | No standard flags | Uses `-aar`, `-config`, `-doctor`, `-init`, `-list-scenarios`, `-validate`, `-version`. No standard flags. |
+
+**Note:** The specialized sims (cyber-redteam, maritime, space-war) use a fundamentally different CLI model — they're config-driven, scenario-based simulators with web UIs and REST APIs. They don't fit the simple "run once, get output" pattern. This is **by design** but should be documented.
+
+---
+
+## Previously Resolved Issues ✅
+
+| Issue | Status |
+|-------|--------|
+| C2BMC nil pointer crash | ✅ Fixed |
+| Interactive mode was stub (`Running...` only) | ✅ Fixed — shows live metrics |
+| Double-tick printing | ✅ Fixed |
+| JSON was minimal (`{simulator, status}`) | ✅ Fixed — includes parameters/data |
+| DecoyType format string (`%!s(...)`) | ✅ Fixed — shows BALLOON/INFLATABLE_RV |
+| `-v` regression on 3 new sims | ✅ Fixed |
+| 6 binaries missing new flags | ✅ Fixed |
+
+---
+
+## Enhancement Suggestions (Not Bugs)
+
+| Priority | Enhancement | Notes |
+|----------|-------------|-------|
+| P0 | Add standard flags to gmd, lrdr, tpy2 | These 3 BMDS sims are missing most standard flags |
+| P0 | Fix `-json` on aegis, gbr, patriot, thaad, hub | Output should be valid JSON only when `-json` is set |
+| P1 | Standardize `-duration` format | BMDS uses Go duration (`5s`), new sims use int seconds (`5`). Pick one. |
+| P2 | Add `-v`, `-i`, `-json` to specialized sims | Or document them as a separate category with different CLI |
+| P2 | Richer JSON for aegis, gbr, patriot, thaad | Currently text output even with `-json` |
+| P3 | Scenario-driven dynamic metrics in `-i` | Interactive metrics are mostly static per tick |
+| P3 | Keyboard controls in `-i` | pause/step/quit beyond ctrl+C |
+| P3 | TUI/ANSI dashboard in `-i` | Currently line-by-line, not panel layout |
+
+---
+
+## Sample Outputs
+
+### air-traffic -i
+```
+[T+0s] 100 flights
+  COMMERCIAL      39    CARGO           17
+  PRIVATE         14    MILITARY        30
+  CRUISE     70   CLIMB      20
+  DESCENT    8    APPROACH   2
 ```
 
-**Specialized Simulators** — Custom interfaces (JSON output, Go app, etc.)
-```go
-// Add new verification function to verifyAllSpecializedSims()
-func verifyYourNewSim(binDir string) SimResult {
-    binPath := fmt.Sprintf("%s/your-new-sim", binDir)
-    result := SimResult{Name: "your-new-sim", Type: "Specialized", Parameters: make(map[string]interface{})}
-    
-    // Your verification logic here
-    // ...
-    
-    return result
-}
-
-// Add to list in verifyAllSpecializedSims()
-return []SimResult{
-    // ... existing
-    verifyYourNewSim(binDir),
-}
+### satellite-tracker -i
+```
+[T+0s] Tracking 30 satellites
+  Visible: 30 | Eclipsed: 0
+  MANNED               6
+  OTHER                24
 ```
 
-### Step 2: Update Count in main()
-
-```go
-fmt.Println("PHASE 2: SPECIALIZED SIMULATORS (N binaries)")
+### space-debris -i
+```
+[T+0s] 5000 debris objects
+  LEO        3030  GEO         510
+  HIGH        953  MEO         507
 ```
 
----
-
-## Test Commands Reference
-
-| Category | Simulator | Command |
-|----------|-----------|---------|
-| BMDS | all 31 | `-json -duration 2s -seed 42` |
-| Satellite | satellite-tracker | `-json -duration 2 -group gps-ops -count 5` |
-| Debris | space-debris | `-json -duration 2` |
-| Air | air-traffic | `-json -duration 2` |
-| Network | tactical-net | `-json -duration 2` |
-| Kill Assessment | kill-assessment | `-json -scenario single-icbm-ekv -seed 42` |
-| WTA | wta | `-json -duration 2` |
-| Electronic War | electronic-war-sim | `-list-scenarios` |
-| Submarine War | submarine-war-sim | `-list-scenarios` |
-| Cyber | cyber-redteam-sim | `-doctor` |
-| Maritime | maritime-sim | `-list-scenarios` |
-| Space War | space-war-sim | `-list-scenarios` |
-
----
-
-## Running the Suite
-
-```bash
-cd verification && go run verify_suite.go
+### bmd-sim-gmd (current — flags only)
+```
+Usage of bmd-sim-gmd:
+  -help           Show help
+  -site string    Launch site (FTG or VAFB) (default "FTG")
+  -variant string GBI variant (CE-I or CE-II) (default "CE-I")
 ```
 
----
-
-## CI Integration
-
-```bash
-#!/bin/bash
-set -e
-cd verification
-go run verify_suite.go > ../verification.log
-if grep -q "FAIL" verification.log; then
-    echo "Verification failed - check EVALUATION.md"
-    exit 1
-fi
+### bmd-sim-lrdr (current — flags only)
+```
+Usage of bmd-sim-lrdr:
+  -help           Show help
 ```
 
----
-
-## File Structure
-
+### cyber-redteam-sim (config-driven model)
 ```
-forge-sim/
-├── verification/
-│   ├── verify_suite.go    # Main test suite
-│   └── README.md          # Documentation (to be added)
-├── binaries/
-│   └── linux-x86/
-│       ├── bmd-sim-*      # 31 BMDS simulators
-│       ├── satellite-tracker
-│       ├── space-debris
-│       ├── air-traffic
-│       ├── tactical-net
-│       ├── kill-assessment
-│       ├── wta
-│       ├── electronic-war-sim
-│       ├── submarine-war-sim
-│       ├── cyber-redteam-sim
-│       ├── maritime-sim
-│       └── space-war-sim
-└── EVALUATION.md          # This report
+-config string    scenario config file (default "configs/enterprise-ad.yaml")
+-doctor           run health check diagnostics
+-init             initialize config directory with sample scenarios
+-no-server        disable API servers (run simulation only)
+-rest-port int    REST API port (default 8080)
+-version          print version and exit
 ```
-
----
-
-## Issues Found
-
-**None** — All 43 simulators passed verification.
-
----
-
-*Generated by FORGE-Sim Verification Suite — Round 10*  
-*Tested: 2026-04-19T03:51:28Z UTC*
