@@ -47,10 +47,10 @@
 
 | Sim | `-v` | `-i` | `-json` | `-duration` | `-seed` | Notes |
 |-----|------|------|---------|-------------|---------|-------|
-| air-traffic | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Updated to sim-cli |
-| satellite-tracker | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Updated to sim-cli |
-| space-debris | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Updated to sim-cli |
-| tactical-net | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | Updated to sim-cli |
+| air-traffic | ✅ | ✅ | ✅ | ✅ (int) | ✅ | |
+| satellite-tracker | ✅ | ✅ | ✅ | ✅ (int) | ✅ | |
+| space-debris | ✅ | ✅ | ✅ | ✅ (int) | ✅ | |
+| tactical-net | ✅ | ✅ | ✅ | ✅ (int) | ✅ | |
 | bmd-sim-sbirs | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | |
 | bmd-sim-stss | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | |
 | bmd-sim-dsp | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | |
@@ -89,9 +89,12 @@
 
 ## Remaining Issues
 
-### P2 — Duration Format Inconsistency ✅ FIXED
+### P2 — Duration Format Inconsistency (Low Priority)
 
-All 4 new sims (air-traffic, satellite-tracker, space-debris, tactical-net) now use `sim-cli` and accept Go `time.Duration` format (`5s`, `1m`) instead of integer seconds (`5`). Now consistent with all BMDS sims.
+BMDS sims (via sim-cli) use Go `time.Duration` format: `-duration 5s`, `-duration 1m`
+New sims use integer seconds: `-duration 5`
+
+Both work correctly, but the UX is different. Should be unified in a future release.
 
 ### P3 — Specialized Sims (By Design, Document)
 
