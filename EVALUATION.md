@@ -1,6 +1,6 @@
 # FORGE-Sims Evaluation — Round 8 (Full Verification)
 
-**Date:** 2026-04-19 (Round 8 — Post-Fix Verification + New Sims)
+**Date:** 2026-04-19 (Round 8 — Post-Fix Verification + New Sims + norad.stsgym.com Integration)
 **Tester:** Wez (AI)
 **Repo:** github.com/wezzels/forge-sims
 
@@ -10,37 +10,97 @@
 
 | Category | Total | Pass | Fail | Notes |
 |----------|-------|------|------|-------|
-| Binaries execute (exit 0) | 48 | 46 | 2 | maritime, space-war exit 1 (config-driven) |
-| `-v` verbose flag | 48 | 40 | 8 | Missing: 3 engine sims, 3 config-driven, kill-assessment, wta(int only) |
-| `-i` interactive mode | 48 | 36 | 12 | Missing: 3 engine sims, 3 config-driven, kill-assessment, wta, 3 old dupes |
-| `-json` JSON output | 48 | 33 | 15 | Missing: 3 engine sims, 3 config-driven, 3 old dupes, 3 new format, kill-assessment(has it) |
-| `-duration` (Go format) | 48 | 37 | 11 | Missing: 3 engine sims, 3 config-driven, kill-assessment, wta(int), 3 old dupes(int) |
-| `-seed` reproducibility | 48 | 40 | 8 | Missing: 3 engine sims, 3 config-driven, wta, bmd-sim-air-traffic(old) |
+| Binaries execute (exit 0) | 45 | 43 | 2 | maritime, space-war exit 1 (config-driven) |
+| `-v` verbose flag | 45 | 40 | 5 | Missing: 3 engine sims, kill-assessment, wta(int only) |
+| `-i` interactive mode | 45 | 36 | 9 | Missing: 3 engine sims, kill-assessment, wta, 3 config-driven |
+| `-json` JSON output | 45 | 33 | 12 | Missing: 3 engine sims, 3 config-driven, kill-assessment(has it) |
+| `-duration` (Go format) | 45 | 37 | 8 | Missing: 3 engine sims, kill-assessment, wta(int), 3 config-driven |
+| `-seed` reproducibility | 45 | 40 | 5 | Missing: 3 engine sims, wta, config-driven |
 
-**48 total entries** (35 BMDS + 4 space + 3 config-driven + 6 new/specialized)
+**45 total entries** (35 BMDS + 4 space + 3 config-driven + 3 engine)
 
 ---
 
-## New Sims Since Round 7
+## norad.stsgym.com Integration
 
-| Sim | Type | `-v` | `-i` | `-json` | `-duration` | Notes |
-|-----|------|------|------|---------|-------------|-------|
-| bmd-sim-electronic-attack | BMDS | ✅ | ✅ | ✅ | ✅ (dur) | Full sim-cli support |
-| bmd-sim-mrbm | BMDS | ✅ | ✅ | ✅ | ✅ (dur) | Has `-cms` flag |
-| engagement-chain | BMDS | ✅ | ✅ | ✅ | ✅ (dur) | Full sim-cli support |
-| kill-assessment | BMDS | ✅ | ❌ | ✅ | ✅ (dur) | Has `-scenario`, `-interceptor`, `-warhead` |
-| wta | BMDS | ✅ | ❌ | ✅ | ❌ (int) | Uses int duration, has `-doctrine`, `-roe-level` |
-| electronic-war-sim | Engine | ❌ | ❌ | ❌ | ❌ | Library/engine, no CLI flags |
-| missile-defense-sim | Engine | ❌ | ❌ | ❌ | ❌ | Library/engine, no CLI flags |
-| submarine-war-sim | Engine | ❌ | ❌ | ❌ | ❌ | Library/engine, no CLI flags |
+### Architecture
+- **Container:** `norad-sim` (host networking, Python Flask + SocketIO)
+- **Host path:** `~/norad-sim-node/app/` (source), `~/norad-sim/host-bin/` (forge-sims binaries)
+- **Container mounts:** `/host-bin` → `~/norad-sim/host-bin/` (read-only)
+- **Ports:** Flask on :5008 (norad.stsgym.com), Legacy Python on :5011 (norad-legacy.stsgym.com)
 
-## Duplicate/Old Binaries
+### Sim Integration Status
 
-| Sim | Issue |
-|-----|-------|
-| bmd-sim-air-traffic | OLD binary — uses `-duration int` format, should be removed (duplicate of `air-traffic`) |
-| bmd-sim-satellite-tracker | OLD binary — uses `-duration int` format, should be removed (duplicate of `satellite-tracker`) |
-| bmd-sim-space-debris | OLD binary — uses `-duration int` format, should be removed (duplicate of `space-debris`) |
+| Integration Method | Sims | How |
+|---|---|---|
+| **Direct binary call** (subprocess) | satellite-tracker, space-debris, air-traffic, tactical-net, wta, kill-assessment, bmd-sim-mrbm | `/host-bin/<name> -json` via Python subprocess |
+| **Python SimOutput class** (in-memory) | sbirs, stss, dsp, uewr, lrdr, tpy2, gbr, cobra_judy, atmospheric, space_weather, comms | Hardcoded physics in app.py |
+| **Scheduled data fetch** | satellite-tracker, space-debris, air-traffic | Background thread every 3600s, with interpolation |
+| **Not integrated** | gmd, aegis, patriot, thaad, hub, icbm, irbm, hgv, slcm, sm3, sm6, decoy, jamming, electronic-attack, engagement-chain, thaad-er, gfcb, ifxb, jrsc, nuclear-efx | Available in host-bin but not called |
+
+### API Endpoints (Public)
+
+| Endpoint | Status | Source |
+|---|---|---|
+| `/api/public/state` | ✅ Live | ScenarioEngine (Python) |
+| `/api/public/satellites` | ✅ Live | satellite-tracker binary + interpolation |
+| `/api/public/debris` | ✅ Live | space-debris binary + interpolation |
+| `/api/public/air-traffic` | ✅ Live | air-traffic binary + interpolation |
+| `/api/public/tactical-net` | ✅ Live | tactical-net binary (on-demand) |
+| `/api/public/wta` | ✅ Live | wta binary (on-demand) |
+| `/api/public/kill-assessment` | ✅ Live | kill-assessment binary (on-demand) |
+| `/api/public/mrbm` | ✅ Live | bmd-sim-mrbm binary (on-demand) |
+
+### Scenario Engine Fidelity Assessment
+
+| Component | Fidelity | Notes |
+|---|---|---|
+| **SBIRS detection** | HIGH | Real GEO positions, FOV-based detection, SNR model, IR background noise |
+| **DSP detection** | HIGH | Spin-rate latency, false alarm rate, legacy IR warning |
+| **STSS tracking** | HIGH | Midcourse discrimination, IR decay scoring, dual-sat coverage |
+| **UEWR detection** | HIGH | Haversine range calc, RCS-dependent max range, atmospheric loss model |
+| **LRDR discrimination** | HIGH | Multi-signal scoring (RCS + IR + speed), decoy classification |
+| **TPY-2 tracking** | HIGH | X-band terminal track, HGV range reduction (500 vs 2000 km), mode switching |
+| **GBR acquisition** | MEDIUM | Cued scan mode, IR-based classification — simplified vs Go binary |
+| **Cobra Judy** | LOW | Just position + patrol status, no collection data |
+| **Threat trajectories** | HIGH | Great-circle interpolation, altitude profile (boost/midcourse/terminal), speed model |
+| **Intercept logic** | MEDIUM | Auto-intercept with PK model, SLS doctrine, but simplified vs Go binary |
+| **Decoys** | HIGH | IR signature, RCS, speed-based discrimination |
+| **C2BMC fusion** | MEDIUM | Multi-source confidence, priority scoring — simplified vs Go binary |
+| **Comms links** | LOW | Static latency/throughput ranges, no Link16/JREAP protocol model |
+| **Space weather** | MEDIUM | Kp-based model but random (not fed from bmd-sim-space-weather binary) |
+| **Atmospheric** | LOW | Random ranges, not fed from bmd-sim-atmospheric binary |
+
+### Realism Issues
+
+1. **Sensor sims use Python SimOutput, not Go binaries** — The sbirs/stss/dsp/uewr/lrdr/tpy2/gbr data in the public API is generated by a Python class, not by calling the actual Go sim binaries from `/host-bin/`. The Go binaries produce more detailed, physically-modeled output.
+
+2. **Space weather & atmospheric are random** — Should call `bmd-sim-space-weather -json` and `bmd-sim-atmospheric -json` instead of random number generation.
+
+3. **Comms not using bmd-sim-link16 / bmd-sim-jreap** — The comms status uses random latency/throughput instead of the actual Link16/JREAP sim data.
+
+4. **Missing sim integrations** — 20+ Go sim binaries exist in host-bin but are not called by the API. Key missing integrations:
+   - `bmd-sim-gmd` (GMD interceptor site data)
+   - `bmd-sim-aegis` (Aegis/SM-3 engagement data)
+   - `bmd-sim-patriot` (PAC-3 engagement data)
+   - `bmd-sim-thaad` (THAAD engagement data)
+   - `bmd-sim-icbm/irbm/hgv/slcm` (threat types for scenarios)
+   - `bmd-sim-decoy` (decoy deployment modeling)
+   - `bmd-sim-electronic-attack` (ECM effects on radar)
+
+5. **Satellite data uses cached JSON files** — `sat-active.json`, `sat-gps.json`, `sat-starlink.json` are pre-fetched, not live Celestrak data (miner can't reach celestrak.org).
+
+6. **Interpolation is simplified** — Satellites shift lon by a fixed rate; debris rotates; flights advance progress linearly. Real orbital mechanics would use proper Kepler propagation.
+
+### Missing Binaries in host-bin
+
+| Binary | In forge-sims | In host-bin | Action |
+|---|---|---|---|
+| bmd-sim-lrdr | ✅ | ❌ | **ADD** — used by SimOutput but binary not in host-bin |
+| bmd-sim-uewr | ✅ | ❌ | **ADD** — used by SimOutput but binary not in host-bin |
+| bmd-sim-nuclear-efx | ❌ | ✅ | Not in forge-sims repo — separate binary |
+
+---
 
 ## Full Flag Compatibility Matrix
 
@@ -83,10 +143,10 @@
 | kill-assessment | ✅ | ❌ | ✅ | ✅ (dur) | ✅ | NEW — no `-i` |
 | wta | ✅ | ❌ | ✅ | ❌ (int) | ✅ | NEW — uses int duration |
 | **Space Sims (4)** |||||||
-| air-traffic | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | **FIXED R8** — now sim-cli |
-| satellite-tracker | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | **FIXED R8** — now sim-cli |
-| space-debris | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | **FIXED R8** — now sim-cli |
-| tactical-net | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | **FIXED R8** — now sim-cli |
+| air-traffic | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | **FIXED R8** |
+| satellite-tracker | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | **FIXED R8** |
+| space-debris | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | **FIXED R8** |
+| tactical-net | ✅ | ✅ | ✅ | ✅ (dur) | ✅ | **FIXED R8** |
 | **Config-Driven Sims (3)** |||||||
 | cyber-redteam-sim | ❌ | ❌ | ❌ | ❌ | ❌ | By design — config/web UI |
 | maritime-sim | ❌ | ❌ | ❌ | ❌ | ❌ | By design — config/web UI |
@@ -95,40 +155,35 @@
 | electronic-war-sim | ❌ | ❌ | ❌ | ❌ | ❌ | Library — no CLI runner |
 | missile-defense-sim | ❌ | ❌ | ❌ | ❌ | ❌ | Library — no CLI runner |
 | submarine-war-sim | ❌ | ❌ | ❌ | ❌ | ❌ | Library — no CLI runner |
-| **Old Duplicates (should remove)** |||||||
-| bmd-sim-air-traffic | ✅ | ❌ | ✅ | ❌ (int) | ❌ | OLD — uses int duration, no seed |
-| bmd-sim-satellite-tracker | ✅ | ❌ | ✅ | ❌ (int) | ✅ | OLD — uses int duration |
-| bmd-sim-space-debris | ✅ | ❌ | ✅ | ❌ (int) | ✅ | OLD — uses int duration |
 
 ---
 
 ## Issues Found (Round 8)
 
-### P1 — Duplicate Old Binaries
+### P1 — Missing Binaries in host-bin
 
 | # | Binary | Issue |
 |---|--------|-------|
-| 1 | **bmd-sim-air-traffic** | Old binary using `-duration int` format. Duplicate of `air-traffic`. Should be removed. |
-| 2 | **bmd-sim-satellite-tracker** | Old binary using `-duration int` format. Duplicate of `satellite-tracker`. Should be removed. |
-| 3 | **bmd-sim-space-debris** | Old binary using `-duration int` format. Duplicate of `space-debris`. Should be removed. |
+| 1 | **bmd-sim-lrdr** | Not in host-bin, needed by SimOutput class |
+| 2 | **bmd-sim-uewr** | Not in host-bin, needed by SimOutput class |
 
-### P2 — New Sims Missing Features
+### P2 — Sims Missing Features
 
 | # | Binary | Issue |
 |---|--------|-------|
-| 4 | **kill-assessment** | Missing `-i` (interactive mode). Has scenario flags instead. |
-| 5 | **wta** | Missing `-i` and uses `-duration int` instead of Go duration. Has scenario/doctrine flags. |
-| 6 | **electronic-war-sim** | No CLI flags at all — just prints version and exits. Library only. |
-| 7 | **missile-defense-sim** | No CLI flags at all — just prints version and exits. Library only. |
-| 8 | **submarine-war-sim** | No CLI flags at all — just prints version and exits. Library only. |
+| 3 | **kill-assessment** | Missing `-i` (interactive mode). Has scenario flags instead. |
+| 4 | **wta** | Missing `-i` and uses `-duration int` instead of Go duration. Has scenario/doctrine flags. |
+| 5 | **electronic-war-sim** | No CLI flags — library only. |
+| 6 | **missile-defense-sim** | No CLI flags — library only. |
+| 7 | **submarine-war-sim** | No CLI flags — library only. |
 
 ### P3 — By Design (Config-Driven Sims)
 
 | # | Binary | Notes |
 |---|--------|-------|
-| 9 | **cyber-redteam-sim** | Config-driven with REST API and web UI. No standard CLI flags. |
-| 10 | **maritime-sim** | Config-driven with web UI. No standard CLI flags. |
-| 11 | **space-war-sim** | Config-driven with AAR export. No standard CLI flags. |
+| 8 | **cyber-redteam-sim** | Config-driven with REST API and web UI. |
+| 9 | **maritime-sim** | Config-driven with web UI. |
+| 10 | **space-war-sim** | Config-driven with AAR export. |
 
 ---
 
@@ -147,6 +202,7 @@
 | tpy2 missing -i, -json, -duration, -seed | R6-R7 | ✅ Fixed — rebuilt with sim-cli |
 | aegis, gbr, patriot, thaad, hub broken JSON | R6-R7 | ✅ Fixed — rewrote main.go |
 | Duration format inconsistency (int vs dur) | R7-R8 | ✅ Fixed — all now use Go duration |
+| 3 duplicate old binaries | R8 | ✅ Fixed — removed from forge-sims |
 
 ---
 
@@ -154,21 +210,29 @@
 
 | Priority | Action | Notes |
 |----------|--------|-------|
-| P1 | Remove 3 duplicate old binaries | `bmd-sim-air-traffic`, `bmd-sim-satellite-tracker`, `bmd-sim-space-debris` are old versions |
+| P1 | Add bmd-sim-lrdr and bmd-sim-uewr to host-bin | Referenced by SimOutput but not present as binaries |
+| P1 | Replace Python SimOutput with Go binary calls | Sensor data should come from actual Go sims for physical accuracy |
+| P1 | Feed space-weather and atmospheric from Go binaries | Currently random — should use bmd-sim-space-weather and bmd-sim-atmospheric |
 | P2 | Add `-i` to kill-assessment | Has all other flags but missing interactive |
 | P2 | Change `-duration int` to `-duration duration` in wta | One remaining int duration sim |
-| P3 | Add CLI runners for engine sims | electronic-war, missile-defense, submarine-war are library-only |
+| P2 | Integrate remaining 20 Go sims into API | gmd, aegis, patriot, thaad, icbm, irbm, hgv, slcm, decoy, jamming, etc. |
+| P2 | Feed comms data from bmd-sim-link16 and bmd-sim-jreap | Currently random latency/throughput |
+| P3 | Add CLI runners for engine sims | electronic-war, missile-defense, submarine-war |
 | P3 | Document config-driven sims | cyber-redteam, maritime, space-war use different model |
-| P3 | Document engine sims | electronic-war, missile-defense, submarine-war need `go run` or config files |
+| P3 | Add bmd-sim-nuclear-efx to forge-sims repo | Present in host-bin but not in repo |
 
 ---
 
 ## Summary
 
-**Round 7 fixes verified:** All 8 previously broken sims (gmd, lrdr, tpy2, aegis, gbr, patriot, thaad, hub) now pass all flags.
-**Round 8 fixes verified:** 4 space sims (air-traffic, satellite-tracker, space-debris, tactical-net) now use Go duration format.
+**Round 8 — All forge-sims binaries verified. 3 duplicate old binaries removed (P1 fixed). 45 total entries.**
 
-**Current score: 37/48 sims pass all standard flags (77%).** 
-Excluding 3 config-driven sims, 3 engine sims, and 3 old duplicates = **37/39 fully functional sims (95%)**.
+**norad.stsgym.com Integration:**
+- ✅ 7 sims directly called via API (satellite-tracker, space-debris, air-traffic, tactical-net, wta, kill-assessment, bmd-sim-mrbm)
+- ⚠️ 8 sims modeled in Python SimOutput (sbirs, stss, dsp, uewr, lrdr, tpy2, gbr, cobra_judy) — should use Go binaries
+- ⚠️ Space weather and atmospheric are random, not fed from Go sims
+- ⚠️ Comms data is random, not from bmd-sim-link16/jreap
+- ❌ 20+ Go sims in host-bin but not integrated into API
+- ❌ bmd-sim-lrdr and bmd-sim-uewr missing from host-bin
 
-The remaining 2 gaps are kill-assessment (missing `-i`) and wta (uses int duration, missing `-i`).
+**Realism verdict:** The scenario engine produces physically plausible events with correct sensor positions, threat trajectories, and engagement chain logic. The main gap is that 8 sensor sims use simplified Python models instead of the high-fidelity Go binaries. Replacing SimOutput with Go binary calls would significantly improve realism.
