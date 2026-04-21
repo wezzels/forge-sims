@@ -227,6 +227,7 @@ func verifyAllSpecializedSims(binDir string) []SimResult {
 		verifyCyberRedteam(binDir),
 		verifyMaritime(binDir),
 		verifySpaceWar(binDir),
+		verifyLaunchVehicleSim(binDir),
 	}
 }
 
@@ -759,4 +760,74 @@ func saveReport() {
 
 	os.WriteFile("../EVALUATION.md", []byte(content), 0644)
 	fmt.Printf("\n  Report saved to EVALUATION.md (%d issues, %d warnings)\n", len(report.Issues), len(report.Warnings))
+}
+// === LAUNCH VEHICLE SIMULATOR ===
+
+func verifyLaunchVehicleSim(binDir string) SimResult {
+	binPath := fmt.Sprintf("%s/launch-veh-sim", binDir)
+	result := SimResult{Name: "launch-veh-sim", Type: "Launch Vehicle", Parameters: make(map[string]interface{})}
+
+	start := time.Now()
+	cmd := exec.Command(binPath, "-json", "-vehicle", "falcon9")
+	output, err := cmd.CombinedOutput()
+	result.Duration = time.Since(start)
+	result.ExitCode = cmd.ProcessState.ExitCode()
+	result.Output = string(output)
+
+	if err != nil && result.ExitCode != 0 {
+		result.Status = "ERROR"
+		result.Issues = append(result.Issues, fmt.Sprintf("Exit code %d", result.ExitCode))
+		report.Issues = append(report.Issues, Issue{Sim: "launch-veh-sim", Type: "EXIT_CODE", Message: fmt.Sprintf("Exit code %d", result.ExitCode), Severity: "CRITICAL"})
+		return result
+	}
+
+	jsonStr := extractJSON(output)
+	if jsonStr == "" {
+		result.Status = "FAIL"
+		result.Issues = append(result.Issues, "No JSON in output")
+		report.Issues = append(report.Issues, Issue{Sim: "launch-veh-sim", Type: "JSON_INVALID", Message: "No JSON in output", Severity: "CRITICAL"})
+		return result
+	}
+
+	var parsed map[string]interface{}
+	if err := json.Unmarshal([]byte(jsonStr), &parsed); err != nil {
+		result.Status = "FAIL"
+		result.Issues = append(result.Issues, fmt.Sprintf("JSON parse error: %v", err))
+		report.Issues = append(report.Issues, Issue{Sim: "launch-veh-sim", Type: "JSON_INVALID", Message: err.Error(), Severity: "CRITICAL"})
+		return result
+	}
+	result.ValidJSON = true
+
+	if status, ok := parsed["status"].(string); ok {
+		result.Parameters["status"] = status
+		if status != "orbit_achieved" && status != "in-flight" {
+			result.Warnings = append(result.Warnings, fmt.Sprintf("Unexpected status: %s", status))
+		}
+	}
+
+	if orbit, ok := parsed["orbit"].(map[string]interface{}); ok {
+		if apogee, ok := orbit["apogee"].(float64); ok {
+			result.Parameters["apogee_km"] = apogee
+		}
+		if perigee, ok := orbit["perigee"].(float64); ok {
+			result.Parameters["perigee_km"] = perigee
+		}
+		if period, ok := orbit["period"].(float64); ok {
+			result.Parameters["period_min"] = period
+		}
+	}
+
+	if finalState, ok := parsed["final_state"].(map[string]interface{}); ok {
+		if time, ok := finalState["time"].(float64); ok {
+			result.Parameters["flight_time_s"] = time
+		}
+	}
+
+	result.Status = getStatus(result.Issues)
+	fmt.Printf("  [%s] launch-veh-sim     | orbit=%.0f km, period=%.1f min, flight=%.0f s\n",
+		result.Status,
+		getFloat(result.Parameters, "apogee_km"),
+		getFloat(result.Parameters, "period_min"),
+		getFloat(result.Parameters, "flight_time_s"))
+	return result
 }
