@@ -1,111 +1,53 @@
 # FORGE-Sims Makefile
-# Build system for all simulator binaries
+# Build system for simulator binaries
 
-GO := go
-GOFLAGS := -ldflags="-s -w"  # Strip debug info for smaller binaries
+# Binary directory
 BUILD_DIR := build/linux-x86
-CMD_DIR := cmd
+BIN_DIR := binaries/linux-x86
 
-# All simulators (in cmd/ directory)
-SIMULATORS := $(shell find $(CMD_DIR) -maxdepth 1 -type d -not -name 'cmd' | sed 's|cmd/||')
+# Pre-built simulators (from binaries/)
+SIMULATORS := $(notdir $(wildcard $(BIN_DIR)/*))
 
-.PHONY: all build clean test verify
+.PHONY: all build clean verify list help
 
 all: build
 
-# Build all simulators
+# Build: copy pre-built binaries to build/
 build:
-	@echo "Building FORGE-Sims..."
+	@echo "Setting up FORGE-Sims..."
 	@mkdir -p $(BUILD_DIR)
 	@for sim in $(SIMULATORS); do \
-		echo "  [BUILD] $$sim"; \
-		$(GO) build $(GOFLAGS) -o $(BUILD_DIR)/$$sim ./$(CMD_DIR)/$$sim; \
+		cp $(BIN_DIR)/$$sim $(BUILD_DIR)/$$sim 2>/dev/null || true; \
 	done
-	@echo "Done. Binaries in $(BUILD_DIR)/"
-
-# Build specific simulator
-$(BUILD_DIR)/%: $(CMD_DIR)/%/main.go
-	@mkdir -p $(BUILD_DIR)
-	@echo "  [BUILD] $*"
-	$(GO) build $(GOFLAGS) -o $@ ./$(CMD_DIR)/$*
-
-# Launch vehicle simulator (standalone target)
-launch-veh-sim:
-	@mkdir -p $(BUILD_DIR)
-	@echo "  [BUILD] launch-veh-sim"
-	$(GO) build $(GOFLAGS) -o $(BUILD_DIR)/launch-veh-sim ./$(CMD_DIR)/launch-veh-sim
+	@echo "Built binaries in $(BUILD_DIR)/"
 
 # Clean build artifacts
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -f *.test
 
 # Run verification suite
 verify:
-	cd verification && $(GO) run verify_suite.go
-
-# Run specific simulator
-run-%:
-	@if [ -f $(BUILD_DIR)/$* ]; then \
-		$(BUILD_DIR)/$*; \
-	else \
-		echo "Binary $* not found. Run 'make build' first."; \
-		exit 1; \
-	fi
+	cd verification && go run verify_suite.go
 
 # List available simulators
 list:
 	@echo "Available simulators:"
 	@for sim in $(SIMULATORS); do \
-		echo "  - $$sim"; \
+		size=$$(du -h "$(BIN_DIR)/$$sim" 2>/dev/null | cut -f1 || echo "?"); \
+		echo "  - $$sim ($$size)"; \
 	done
-	@echo ""
-	@echo "Built binaries:"
-	@for bin in $(BUILD_DIR)/*; do \
-		if [ -f "$$bin" ]; then \
-			size=$$(du -h "$$bin" | cut -f1); \
-			echo "  - $$(basename $$bin) ($$size)"; \
-		fi; \
-	done
-
-# Cross-compile for multiple platforms
-cross:
-	@mkdir -p build/linux-x86 build/linux-arm64 build/darwin-amd64 build/darwin-arm64
-	GOOS=linux GOARCH=amd64 $(GO) build $(GOFLAGS) -o build/linux-x86/ ./...
-	GOOS=linux GOARCH=arm64 $(GO) build $(GOFLAGS) -o build/linux-arm64/ ./...
-	GOOS=darwin GOARCH=amd64 $(GO) build $(GOFLAGS) -o build/darwin-amd64/ ./...
-	GOOS=darwin GOARCH=arm64 $(GO) build $(GOFLAGS) -o build/darwin-arm64/ ./...
-
-# Format code
-fmt:
-	$(GO) fmt ./...
-
-# Run tests
-test:
-	$(GO) test ./...
-
-# Update dependencies
-tidy:
-	$(GO) mod tidy
 
 # Help
 help:
 	@echo "FORGE-Sims Build System"
 	@echo ""
 	@echo "Targets:"
-	@echo "  all          Build all simulators (default)"
-	@echo "  build        Build all simulators"
+	@echo "  all          Setup build directory (default)"
+	@echo "  build        Copy binaries to build/"
 	@echo "  clean        Remove build artifacts"
 	@echo "  verify       Run verification suite"
-	@echo "  test         Run tests"
-	@echo "  fmt          Format code"
-	@echo "  tidy         Update go.mod"
-	@echo "  cross        Cross-compile for all platforms"
 	@echo "  list         List available simulators"
 	@echo "  help         Show this help"
 	@echo ""
-	@echo "Examples:"
-	@echo "  make build               # Build all"
-	@echo "  make launch-veh-sim      # Build specific simulator"
-	@echo "  make run-launch-veh-sim  # Build and run"
-	@echo "  make verify              # Run verification suite"
+	@echo "Note: Source code for launch-veh-sim is at:"
+	@echo "      https://idm.wezzel.com/crab-meat-repos/launch-veh-sim"
