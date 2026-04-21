@@ -1,0 +1,31 @@
+# Forge-Sims — Binaries and Documentation Only
+# No source code is stored in this repository
+
+# Source code
+*.go
+*.py
+*.js
+*.ts
+*.java
+*.c
+*.cpp
+*.h
+*.rs
+*.swift
+
+# Build artifacts
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+*.tmp
+*.bak
