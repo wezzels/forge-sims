@@ -557,7 +557,50 @@ Multi-sensor feed aggregation without real alert level management, fusion algori
 | Sonar | Active/passive | Basic model | Simplified |
 | Platforms | Multiple sub types | Modeled | Limited |
 
-**Confidence: LOW** — Supplementary sim, not part of core BMDS suite.## Cross-Cutting Issues
+**Confidence: LOW** — Supplementary sim, not part of core BMDS suite.
+
+---
+
+
+### cyber-redteam-sim — Cyber Red Team Simulator
+**Accuracy: Medium-High**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Attack types | MITRE ATT&CK framework | Full TTP chain | ✅ |
+| Network model | Enterprise AD, DMZ, cloud | 4 scenarios | ✅ |
+| Detection | SIEM, EDR, IDS | Modeled | Simplified |
+| Platforms | 5 OS/arch | All built | ✅ |
+
+**Confidence: MEDIUM-HIGH** — Has own documentation in docs/cyber-redteam-sim-*.md. MITRE ATT&CK mapping is comprehensive.
+
+---
+
+### maritime-sim — Maritime Domain Simulation
+**Accuracy: Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Vessels | Multiple types | Modeled | Simplified |
+| Sensors | Radar, sonar, AIS | Modeled | Basic sonar |
+| Navigation | Real sea lanes | Modeled | ✅ |
+
+**Confidence: MEDIUM** — Has own documentation in docs/maritime-sim-*.md.
+
+---
+
+### space-war-sim — Space Warfare Simulation
+**Accuracy: Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Assets | Satellites, debris | Modeled | Simplified |
+| Weapons | ASAT, directed energy | Modeled | Basic |
+| Orbital mechanics | Keplerian | Modeled | ✅ |
+
+**Confidence: MEDIUM** — Has own documentation in docs/space-war-sim-*.md.
+
+## Cross-Cutting Issues
 
 ### bmd-sim-aegis — Aegis Combat System (AN/SPY-1D)
 **Accuracy: Medium-High**
