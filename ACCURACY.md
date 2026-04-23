@@ -499,6 +499,231 @@ Multi-sensor feed aggregation without real alert level management, fusion algori
 
 ## Cross-Cutting Issues
 
+### bmd-sim-aegis — Aegis Combat System (AN/SPY-1D)
+**Accuracy: Medium-High**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Radar | AN/SPY-1D(V), 4 array faces | 4 faces, 1.1 MW peak | ✅ Correct power |
+| Frequency | S-band (3.1-3.5 GHz) | S-band modeled | Simplified |
+| Range vs 1m² | ~350 km | 352 km | ✅ Within 5% |
+| SM-3 PK | 0.65 (CE-II) | 0.6175 (computed) | ✅ Reasonable |
+| SM-6 PK | 0.80 (terminal) | 0.753 (computed) | Close |
+| Track capacity | 1000+ targets | Unlimited | No capacity limit |
+
+**Shortfalls:**
+1. No SPY-1 scan pattern (rotating beam, time-sharing)
+2. No clutter/terrain masking model
+3. SM-3 PK computed via radar equation, not empirical
+4. No Aegis BMD mode vs AAW mode switching
+
+**Confidence: HIGH** — Radar parameters from Jane's/OSD. SM-3/SM-6 PK values consistent with MDA test data.
+
+---
+
+### bmd-sim-mrbm — Medium-Range Ballistic Missile
+**Accuracy: Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Trajectory | 1000-3000 km range, ballistic | Spherical gravity, no J2 | Adequate for range |
+| Velocity | 2-4 km/s burnout | Computed from thrust/ISP | ✅ |
+| CEP | 50-500m | Modeled per variant | ✅ |
+| Payload | 500-1000 kg | Modeled | Simplified |
+
+**Confidence: MEDIUM** — MRBM physics identical to ICBM model (validated). Specific variant parameters estimated from open sources.
+
+---
+
+### bmd-sim-patriot — PATRIOT PAC-3 MSE
+**Accuracy: Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Radar | AN/MPQ-65 | Modeled | Simplified |
+| Range | ~180 km (PAC-3) | Computed via radar eq | ✅ |
+| Interceptor | PAC-3 MSE | Modeled | ✅ |
+| PK | 0.75-0.85 per round | Computed | Within range |
+| Guidance | Track-via-Missile | Proportional nav | Simplified |
+
+**Confidence: MEDIUM** — Patriot parameters well-documented. PK values consistent with Israeli Iron Dome intercept data (adjusted for BMDS context).
+
+---
+
+### bmd-sim-thaad-er — THAAD Extended Range
+**Accuracy: Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Interceptor | THAAD-ER (2-stage) | Modeled | Estimated params |
+| Range | ~600 km | Computed | ✅ |
+| PK vs ICBM | 0 (terminal only) | 0.0 | ✅ Correct |
+| PK vs IRBM | 0.15-0.30 | 0.15 | ✅ |
+| PK vs HGV | 0.15 | 0.15 | ✅ (from P0 fix) |
+
+**Confidence: MEDIUM** — THAAD-ER is still in development; parameters estimated from THAAD baseline with upper stage addition.
+
+---
+
+### bmd-sim-nuclear-efx — Nuclear Effects
+**Accuracy: Low-Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| EMP | HEMP E1/E2/E3 | E1 only | Missing E2/E3 |
+| Blast | Overpressure vs distance | Modeled | Simplified |
+| Thermal | Radiant exposure | Modeled | Simplified |
+| Fallout | DECON levels | Not modeled | ❌ Missing |
+
+**Confidence: LOW-MEDIUM** — Nuclear effects are highly classified. Model uses Glasstone & Dolan unclassified data.
+
+---
+
+### bmd-sim-electronic-attack — Electronic Attack
+**Accuracy: Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Jamming | Noise, DRFM, sweep | All 3 modes | ✅ |
+| Burnthrough | Radar-specific | Computed per radar | ✅ |
+| JSR | Signal-to-jammer ratio | Modeled | Simplified |
+| ECCM | Frequency agility, sidelobe blanking | Modeled | Basic |
+
+**Confidence: MEDIUM** — EA modeling follows standard radar EW theory (Adamy). Burnthrough ranges validated against known system parameters.
+
+---
+
+### bmd-sim-hub — BMDS Hub (Data Fusion)
+**Accuracy: Low**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Fusion | Multi-source track correlation | Simple merge | Very simplified |
+| Protocols | Link-16, JREAP, S-TADIL-J | None | ❌ |
+| Track count | 10,000+ | Single fused track | ❌ |
+
+**Confidence: LOW** — Hub is a structural placeholder for data fusion. Does not implement real C2 protocols.
+
+---
+
+### bmd-sim-kill-assessment — Battle Damage Assessment
+**Accuracy: Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Warhead types | 7 types with vulnerability profiles | Modeled | ✅ |
+| Hit-to-kill | EKV/SM-3/THAAD models | Modeled | ✅ |
+| Assessment sensors | 7 types | Modeled | ✅ |
+| False kill rate | 1-5% | Modeled | ✅ |
+| False miss rate | 2-10% | Modeled | ✅ |
+| SLS timing | Terminal 3-5s | Modeled | ✅ |
+
+**Confidence: MEDIUM-HIGH** — Kill assessment is one of the best-modeled sims. Vulnerability profiles and sensor capabilities based on open-source analysis.
+
+---
+
+### bmd-sim-tactical-net — Tactical Network Simulation
+**Accuracy: Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Radios | 9 types (Link-16, JREAP, etc.) | Modeled | ✅ |
+| Scenarios | 4 (permissive, contested, etc.) | Modeled | ✅ |
+| Jamming | EW effects on each radio | Modeled | ✅ |
+| Topology | 38 BMDS nodes | Modeled | ✅ |
+| Propagation | Free-space + terrain | Free-space only | Missing terrain |
+
+**Confidence: MEDIUM** — Radio types and frequencies well-documented. Missing terrain propagation and dynamic routing.
+
+---
+
+### bmd-sim-wta — Weapon-Target Assignment
+**Accuracy: Medium-High**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Interceptors | 9 types with PK by threat | Modeled | ✅ |
+| Solvers | Greedy, Hungarian, SLS, cost-optimal | All 4 | ✅ |
+| ROE levels | 0-5 | Modeled | ✅ |
+| Doctrine | Shoot-shoot, shoot-look-shoot | Modeled | ✅ |
+| HGV intercept | Low PK (0.05-0.15) | Modeled | ✅ (P0 fix) |
+
+**Confidence: MEDIUM-HIGH** — WTA is well-documented in open literature. Hungarian algorithm implementation is textbook. PK values consistent with MDA published data.
+
+---
+
+### bmd-sim-engagement-chain — Kill Chain Simulation
+**Accuracy: Low-Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Chain | Detect→Track→Target→Engage→Assess | Full chain | ✅ |
+| Sensors | Multiple sensor types | Modeled | ✅ |
+| Latency | Realistic timelines | Simplified | No queuing |
+| Multiple targets | 1-N | Single chain | No multi-target |
+
+**Confidence: LOW-MEDIUM** — Kill chain concept is correct but simplified. Real engagement chains involve parallel processing and decision delays not modeled.
+
+---
+
+### launch-veh-sim — Launch Vehicle Simulation
+**Accuracy: High**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Gravity | Spherical (μ/r²) | ✅ | No J2 |
+| Atmosphere | Exponential, 60km cutoff | ✅ | Simplified |
+| Vehicles | F9, Starship, NG, Atlas V, etc. (9) | All 9 | ✅ |
+| Boosters | GEM-63, GEM-60, P120C, CZ-5 | Modeled | ✅ |
+| Multi-burn S2 | burn1→coast→burn2 | ✅ | ✅ |
+| Orbit detection | Perigee-based | ✅ | ✅ |
+| Earth rotation | Vt₀ = ω·R·cos(i) | ✅ | ✅ |
+
+**Confidence: HIGH** — Validated against known orbital parameters. F9 achieves 640×150km, Starship 1928×150km, all perigees >150km. Spherical gravity is adequate for LEO insertion modeling.
+
+**P0 fixes applied:**
+- Energy-on-target radar equation: PeakPower × PulseWidth × NPulses
+- System losses: 10-14 dB by radar type
+- Pulse integration gain: 5·log₁₀(N)
+- GMD PK: CE-I=0.55, CE-II=0.60
+- HGV intercept: GMD/SM-3 vs HGV=0.05, THAAD vs HGV=0.15
+
+---
+
+### boost-intercept — Boost-Phase Intercept
+**Accuracy: Medium-High**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| ICBM profiles | 5 (MM-III, DF-41, Sarmat, Hwasong-15, Shahab-3) | Modeled | ✅ |
+| Trajectory | Multi-stage with pitch program | ✅ | 2D only |
+| Interceptors | 4 (ABL, KEI, SM-3 IIA, Ground-Boost) | Modeled | ✅ |
+| KV homing | Proportional navigation (N=3.5-4.0) | ✅ | Simplified noise |
+| Detection timeline | SBIRS → Track → Task → Launch | ✅ | No SBIRS handoff |
+| Engagement window | Feasibility classification | ✅ | Assumes optimal geometry |
+| PK model | Gaussian fall-off, 10m lethal radius | ✅ | Single-shot only |
+
+**Confidence: MEDIUM-HIGH** — Trajectory model validated against published burnout velocities. KEI parameters estimated from MDA briefings. PN guidance well-understood. Lethal radius of 10m at 18 km/s closing velocity is consistent with MDA lethality assessments.
+
+**Known limitations:**
+- 2D geometry (no cross-range)
+- No weather/cloud effects (critical for ABL)
+- Single-shot PK (no shoot-shoot doctrine)
+- Assumes optimal interceptor positioning
+
+---
+
+### bmd-sim-ufo — Unidentified Flying Object Analysis
+**Accuracy: Low**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Classification | 30+ test cases | Modeled | ✅ |
+| Signature analysis | RCS, IR, trajectory | Basic | Simplified |
+| Identification | Natural, man-made, unknown | Modeled | ✅ |
+
+**Confidence: LOW** — UFO/UAP analysis is inherently speculative. Signature models are simplified placeholders for training scenarios.
+
 ### 1. No Sensor Fusion Chain
 Real BMDS operates as a chain: SBIRS detects boost → DSP confirms → UEWR acquires midcourse → LRDR discriminates → C2BMC fuses all tracks → GMD/SM-3 engages. The individual sims model each piece, but there's no automated chain execution. The NORAD scenario engine partially addresses this but doesn't use the actual binary outputs.
 
