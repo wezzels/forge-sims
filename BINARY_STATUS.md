@@ -70,4 +70,4 @@
 | electronic-war-sim | Electronic warfare simulator | ✅ |
 | ufo | UFO/UAP analysis (30 test cases) | ✅ |
 
-**Total: 56 binaries**
+**Total: 56 binaries**debris-field | 2.5M | NASA EVOLVE fragment model, 6 scenarios, collision risk, orbital decay | PASS

@@ -600,6 +600,23 @@ Multi-sensor feed aggregation without real alert level management, fusion algori
 
 **Confidence: MEDIUM** — Has own documentation in docs/space-war-sim-*.md.
 
+### debris-field — Post-Intercept Debris Field Simulation
+**Accuracy: Medium-High**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Fragment model | NASA EVOLVE (Johnson & Krisko) | Power-law mass distribution | Simplified |
+| Fragment count | 100-10,000+ per event | Computed from specific energy | ✅ |
+| Size categories | Trackable/Medium/Small/Micro | 4 categories | ✅ |
+| Orbital mechanics | Keplerian with J2 | Keplerian (no J2) | Simplified |
+| Orbital decay | Drag + solar radiation pressure | Exponential atmosphere model | Simplified |
+| Collision probability | NASA ORDEM model | Flux × cross-section | Simplified |
+| Lifetime | 0-1000+ years | Altitude-based estimate | ✅ |
+| Assets at risk | ISS, Hubble, LEO, GPS, GEO | 5 predefined assets | ✅ |
+| Scenarios | 6 (GMD, SM-3, THAAD, PAC-3, Kessler, detonation) | All 6 | ✅ |
+
+**Confidence: MEDIUM-HIGH** — NASA EVOLVE fragment model is well-documented. Fragment count formula matches published data. Orbital elements use Keplerian mechanics (sufficient for debris cloud modeling). Lifetime estimates are approximate but directionally correct.
+
 ## Cross-Cutting Issues
 
 ### bmd-sim-aegis — Aegis Combat System (AN/SPY-1D)
