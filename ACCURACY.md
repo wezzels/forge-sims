@@ -497,7 +497,67 @@ Multi-sensor feed aggregation without real alert level management, fusion algori
 
 ---
 
-## Cross-Cutting Issues
+### bmd-sim-gbr — Ground-Based Radar (GBR/XBR)
+**Accuracy: Medium**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Type | X-band (10 GHz) | Modeled at correct freq | ✅ |
+| Power | 170 kW average | Modeled | Simplified |
+| Gain | 50 dBi | Modeled | ✅ |
+| Range vs 1m² | ~2000 km | Computed via radar eq | Close |
+| System losses | 10 dB | ✅ (P0 fix applied) | ✅ |
+
+**Confidence: MEDIUM** — GBR parameters from OSD/MDA briefings. Detection range computation validated against known X-band radar performance.
+
+---
+
+### air-combat-sim — Air Combat Simulation
+**Accuracy: Low**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Aircraft | Multiple types | Modeled | Simplified |
+| Radar | Air-to-air modes | Basic | Simplified |
+| Weapons | AIM-120, AIM-9 | Modeled | Basic PK |
+
+**Confidence: LOW** — Air combat is a placeholder/supplementary sim. Not part of the core BMDS suite.
+
+---
+
+### electronic-war-sim — Electronic Warfare Simulation
+**Accuracy: Low**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| EW types | ECM, ECCM, EP | Modeled | Simplified |
+| Scenarios | Multiple | Basic | Limited |
+
+**Confidence: LOW** — Overlaps with bmd-sim-electronic-attack and bmd-sim-jamming. Legacy placeholder.
+
+---
+
+### missile-defense-sim — Legacy BMDS Simulator
+**Accuracy: Low**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Scope | Full BMDS | Basic | Very simplified |
+| Physics | Realistic models | Simplified | Low fidelity |
+
+**Confidence: LOW** — Legacy predecessor to the bmd-sim-* suite. Kept for backwards compatibility.
+
+---
+
+### submarine-war-sim — Submarine Warfare
+**Accuracy: Low**
+
+| Aspect | Real System | Simulator | Gap |
+|--------|------------|-----------|-----|
+| Sonar | Active/passive | Basic model | Simplified |
+| Platforms | Multiple sub types | Modeled | Limited |
+
+**Confidence: LOW** — Supplementary sim, not part of core BMDS suite.## Cross-Cutting Issues
 
 ### bmd-sim-aegis — Aegis Combat System (AN/SPY-1D)
 **Accuracy: Medium-High**
