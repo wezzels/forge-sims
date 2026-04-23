@@ -78,3 +78,4 @@
 - `configs/space-war-sim/` — Scenario configs (scenario.yaml, engagement.yaml)
 
 **Install guide:** [docs/space-war-sim-INSTALL.md](docs/space-war-sim-INSTALL.md)
+boost-intercept | 2.4M | 5 ICBM profiles, 4 interceptor variants, 5 scenarios, PK model, detection timeline | PASS
