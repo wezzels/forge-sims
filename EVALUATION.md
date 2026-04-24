@@ -1,6 +1,6 @@
 # FORGE-Sims Evaluation — Round 15
 
-**Date:** 2026-04-23 (Round 15 — Post-circularization, 3 new sims, NORAD integration)
+**Date:** 2026-04-23 (Round 15 — Full Re-audit)
 **Repo:** github.com/wezzels/forge-sims
 **Total binaries:** 52 (excluding scripts)
 
@@ -10,11 +10,11 @@
 
 | Category | Total | Pass | Fail | Notes |
 |----------|-------|------|------|-------|
-| Binaries execute (exit 0) | 52 | 49 | 3 | maritime, space-war, cyber-redteam (config-driven) |
-| Clean JSON output | 52 | 46 | 6 | 3 config-driven, 3 engine-only |
+| Binaries execute (exit 0) | 52 | 50 | 2 | maritime, space-war (config-driven) |
+| All standard flags | 52 | 44 | 8 | 3 config-driven, 3 engine-only, 2 partial |
+| Clean JSON output | 52 | 46 | 6 | 3 config-driven, 2 engine-only, 1 needs-scenario |
 | Zero stubs/mocks | 52 | 52 | 0 | ✅ Zero found |
 | Zero format string bugs | 52 | 52 | 0 | ✅ All fixed |
-| NORAD API integration | 52 | 52 | 0 | ✅ All wired |
 
 ---
 
@@ -22,242 +22,155 @@
 
 | Sim | Change |
 |-----|--------|
-| kill-chain-rt | 🆕 NEW — Real-time kill chain timing model (10 sensors, 6 interceptors, 6 scenarios) |
-| launch-veh-sim | ✅ FIXED — JSON output restored, orbit circularization added (6/8 vehicles to ecc<0.005) |
-| launch-veh-sim | ✅ IMPROVED — Kepler equation solver for coast-to-apogee, computeTimeToApogee() |
-| boost-intercept | ✅ NORAD WIRED — `/api/boost-intercept` endpoint |
-| debris-field | ✅ NORAD WIRED — `/api/debris-field` endpoint |
-| kill-chain-rt | ✅ NORAD WIRED — `/api/kill-chain` endpoint |
-| PHYSICS-COMPENDIUM.md | 🆕 NEW — Complete physics documentation for all 58+ simulators |
-
----
-
-## kill-chain-rt — NEW 🆕
-
-End-to-end kill chain timing model with 10 sensor models, 6 interceptor models, track management, and kill assessment.
-
-**Sensor Models (10):**
-| Sensor | Detection Latency | Track Latency | Max Range |
-|--------|-----------------|---------------|-----------|
-| SBIRS GEO | 10s | 15s | 42,000 km |
-| DSP (Legacy) | 30s | 45s | 40,000 km |
-| STSS LEO | 15s | 20s | 20,000 km |
-| UEWR | 5s | 8s | 5,000 km |
-| AN/TPY-2 | 2s | 4s | 1,000 km |
-| LRDR | 3s | 5s | 3,000 km |
-| GBR/XBR | 2s | 4s | 2,000 km |
-| Cobra Judy | 3s | 6s | 1,860 km |
-| SPY-1D | 2s | 4s | 625 km |
-| MPQ-65 | 1s | 2s | 180 km |
-
-**Interceptor Models (6):**
-| Interceptor | PK (ICBM) | PK (HGV) | Salvo | Reaction |
-|-------------|-----------|----------|-------|----------|
-| GMD/GBI | 0.55 | 0.05 | 2 | 20s |
-| SM-3 IIA | 0.65 | 0.05 | 2 | 13s |
-| SM-6 | 0.75* | 0.10 | 2 | 8s |
-| THAAD | 0.70* | 0.15 | 2 | 16s |
-| PAC-3 MSE | 0.75* | 0.10 | 4 | 7s |
-| KEI | 0.68 | 0.15 | 2 | 25s |
-
-*vs MRBM for terminal systems
-
-**6 Scenarios:**
-| Scenario | Total Chain Time | PK | Effective PK | Assessment |
-|----------|-----------------|-----|-------------|-----------|
-| GMD vs ICBM (midcourse) | 194s | 0.55 | 0.80 (2 shots) | INCONCLUSIVE |
-| Aegis SM-3 vs IRBM | ~120s | 0.65 | 0.88 | KILL |
-| THAAD terminal Korea | ~90s | 0.70 | 0.91 | KILL |
-| Patriot PAC-3 terminal | ~72s | 0.75 | 0.94 | KILL |
-| SM-6 vs HGV terminal | 97s | 0.10 | 0.19 | MISS |
-| KEI boost-phase | ~100s | 0.68 | 0.90 | KILL |
-
-**Physics:**
-- Track progression: TENTATIVE → FIRM → PRECISE → WEAPON_QUALITY
-- Kill assessment: KILL/MISS/INCONCLUSIVE/PENDING with false kill (1-2%) and miss (3-5%) rates
-- SLS doctrine: shoot-shoot, shoot-look-shoot, adaptive
-- 22 JSON parameters per scenario
-- 20 tests passing
-
-**Verdict: High-fidelity kill chain timing.** ✅
-
----
-
-## launch-veh-sim — FIXED + CIRCULARIZATION ✅
-
-All R14 regressions resolved. JSON output restored. Orbit circularization added.
-
-**Orbit Circularization Results:**
-| Vehicle | Apogee | Perigee | Ecc | Circ ΔV | Status |
-|---------|--------|---------|-----|---------|--------|
-| Falcon 9 | 640 km | 574 km | 0.005 | 138 m/s | ✅ Circularized |
-| Starship | 1928 km | 231 km | 0.114 | 428 m/s* | ⚠️ Fuel limited |
-| New Glenn | 561 km | 495 km | 0.005 | 115 m/s | ✅ Circularized |
-| Atlas V 551 | 1932 km | 1850 km | 0.005 | 428 m/s | ✅ Circularized |
-| Delta IV M+ | 999 km | 150 km | 0.061 | — | Single-burn |
-| Vulcan VC4 | 1329 km | 1253 km | 0.005 | 304 m/s | ✅ Circularized |
-| Ariane 6 A64 | 2014 km | 1932 km | 0.005 | 444 m/s | ✅ Circularized |
-| Long March 5 | 1160 km | 1087 km | 0.005 | 265 m/s | ✅ Circularized |
-
-*Starship: 428 m/s ΔV needed but only ~22 m/s available after burn2 (fuel limited — realistic)
-
-**New Physics:**
-- `computeTimeToApogee()` — Kepler equation solver for accurate coast timing
-  - True anomaly from position → eccentric anomaly → mean anomaly → time
-- `Circularize` flag per vehicle (Delta IV: false, all others: true)
-- S2 burn3 phase: prograde burn at apogee, terminates when ecc < 0.005
-- `circ_dv_ms` and `circ_alt_km` in JSON output
-
-**Previous R14 Issues — Now Resolved:**
-| Issue | R14 Status | R15 Status |
-|-------|-----------|------------|
-| `-json` returns empty | ❌ REGRESSION | ✅ FIXED |
-| Lost `-i`, `-v`, `-seed` | ❌ REGRESSION | ✅ FIXED (sim-cli provides `-seed`) |
-| Duration changed to float | Changed | Kept as float (simpler) |
-
-**Verdict: High-fidelity launch simulation with circularization.** ✅
-
----
-
-## NORAD API Integration
-
-All simulators now accessible via norad.stsgym.com:
-
-| Endpoint | Binary | Auth Required | Guest Access |
-|----------|--------|--------------|-------------|
-| `/api/kill-chain` | kill-chain-rt | Yes | `/api/public/kill-chain` |
-| `/api/boost-intercept` | boost-intercept | Yes | `/api/public/boost-intercept` |
-| `/api/debris-field` | debris-field | Yes | `/api/public/debris-field` |
-| `/api/wta` | wta | Yes | `/api/public/wta` |
-| `/api/kill-assessment` | kill-assessment | Yes | `/api/public/kill-assessment` |
-| `/api/tactical-net` | tactical-net | Yes | `/api/public/tactical-net` |
-| `/api/mrbm` | mrbm | Yes | Yes |
-| `/api/satellites` | satellite-tracker | Yes | `/api/public/satellites` |
-| `/api/debris` | space-debris | Yes | `/api/public/debris` |
-| `/api/air-traffic` | air-traffic | Yes | `/api/public/air-traffic` |
-
-+ Full scenario engine with 7 BMDS scenarios and real-time telemetry
+| air-combat-sim | ✅ **NOW HAS `-json` stdout!** 46 values, all flags pass |
+| air-combat-sim | ✅ `-seed`, `-duration`, `-v`, `-i` all working |
+| kill-chain-rt | 🆕 NEW — Kill chain real-time simulator (6 scenarios) |
+| launch-veh-sim | ✅ `-json` FIXED (was returning empty) |
+| launch-veh-sim | ⚠️ Still missing `-i`, `-v`, `-seed` flags |
+| launch-veh-sim | ⚠️ `-duration` is float seconds (not Go Duration) |
+| launch-veh-sim | ⚠️ Max Q still 94 kPa (real F9 ~35 kPa) |
+| tactical-net | ⚠️ `-json` still prints interactive text before JSON |
 
 ---
 
 ## Full Audit Results
 
-| Sim | json | scenario | params | Status |
-|-----|------|----------|--------|--------|
-| **BMDS Sensors (10)** |||||
-| bmd-sim-sbirs | ✅ | 6 | 6 | ✅ |
-| bmd-sim-dsp | ✅ | 3 | 5 | ✅ |
-| bmd-sim-stss | ✅ | 2 | 5 | ✅ |
-| bmd-sim-uewr | ✅ | 4 | 4 | ✅ |
-| bmd-sim-tpy2 | ✅ | 3 | 5 | ✅ |
-| bmd-sim-lrdr | ✅ | 3 | 4 | ✅ |
-| bmd-sim-gbr | ✅ | 2 | 2 | ✅ |
-| bmd-sim-cobra-judy | ✅ | 2 | 2 | ✅ |
-| bmd-sim-aegis | ✅ | 3 | 11 | ✅ |
-| bmd-sim-patriot | ✅ | 2 | 4 | ✅ |
-| **BMDS Threats (7)** |||||
-| bmd-sim-icbm | ✅ | 6 | 11 | ✅ |
-| bmd-sim-irbm | ✅ | 5 | 12 | ✅ |
-| bmd-sim-mrbm | ✅ | 4 | 13 | ✅ |
-| bmd-sim-hgv | ✅ | 3 | 12 | ✅ |
-| bmd-sim-slcm | ✅ | 3 | 5 | ✅ |
-| bmd-sim-decoy | ✅ | 6 | 3 | ✅ |
-| bmd-sim-nuclear-efx | ✅ | 6 | 23 | ✅ |
-| **BMDS Interceptors (5)** |||||
-| bmd-sim-gmd | ✅ | 5 | 12 | ✅ |
-| bmd-sim-sm3 | ✅ | 4 | 10 | ✅ |
-| bmd-sim-sm6 | ✅ | 3 | 11 | ✅ |
-| bmd-sim-thaad | ✅ | 3 | 3 | ✅ |
-| bmd-sim-thaad-er | ✅ | 2 | 8 | ✅ |
-| **BMDS C2/Network (8)** |||||
-| bmd-sim-c2bmc | ✅ | 3 | 3 | ✅ |
-| bmd-sim-tactical-net | ✅ | 9 | 9 | ✅ FIXED |
-| bmd-sim-link16 | ✅ | 2 | 3 | ✅ |
-| bmd-sim-jreap | ✅ | 2 | 2 | ✅ |
-| bmd-sim-ifxb | ✅ | 2 | 3 | ✅ |
-| bmd-sim-gfcb | ✅ | 2 | 2 | ✅ |
-| bmd-sim-jrsc | ✅ | 2 | 3 | ✅ |
-| bmd-sim-jamming | ✅ | 3 | 4 | ✅ |
-| **BMDS EW/Env (3)** |||||
-| bmd-sim-electronic-attack | ✅ | 6 | 11 | ✅ |
-| bmd-sim-atmospheric | ✅ | 2 | 4 | ✅ |
-| bmd-sim-space-weather | ✅ | 3 | 5 | ✅ |
-| **Kill Chain (4)** |||||
-| kill-chain-rt | ✅ | 6 | 22 | ✅ 🆕 |
-| boost-intercept | ✅ | 5 | 14 | ✅ |
-| kill-assessment | ✅ | 8 | 7 | ✅ |
-| engagement-chain | ✅ | 3 | 14 | ✅ |
-| **Debris/Orbit (3)** |||||
-| debris-field | ✅ | 6 | 18 | ✅ |
-| satellite-tracker | ✅ | 3 | 3 | ✅ |
-| space-debris | ✅ | 2 | — | ✅ |
-| **WTA/Support (2)** |||||
-| wta | ✅ | 8 | 6 | ✅ |
-| ufo | ✅ | 5 | 4 | ✅ |
-| **Air/Sea (2)** |||||
-| air-traffic | ✅ | 4 | — | ✅ |
-| bmd-sim-hub | ✅ | 2 | 2 | ✅ |
-| **Launch (1)** |||||
-| launch-veh-sim | ✅ | 9 | 3+orbit | ✅ FIXED |
-| **Config-Driven (7)** |||||
-| air-combat-sim | ✅ | 5 | 9 | ✅ REWRITTEN |
-| cyber-redteam-sim | ❌ | — | 0 | Config-driven |
-| maritime-sim | ❌ | — | 0 | Config-driven |
-| space-war-sim | ❌ | — | 0 | Config-driven |
-| electronic-war-sim | ❌ | 3 | 0 | Engine-only |
-| missile-defense-sim | ❌ | 3 | 0 | Engine-only |
-| submarine-war-sim | ❌ | 3 | 0 | Engine-only |
+| Sim | json | i | dur | seed | v | vals | Status |
+|-----|------|---|-----|------|---|------|--------|
+| **BMDS Core (31)** |||||||
+| bmd-sim-sbirs through bmd-sim-jreap | ✅ | ✅ | ✅ | ✅ | ✅ | 2-22 | ✅ All pass |
+| **Interceptors & Support (14)** |||||||
+| boost-intercept | ✅ | ✅ | ✅ | ✅ | ✅ | 11 | ✅ |
+| debris-field | ✅ | ✅ | ✅ | ✅ | ✅ | 11 | ✅ |
+| kill-chain-rt | ✅* | ✅ | ✅ | ✅ | ✅ | 5† | ✅ Needs -scenario |
+| engagement-chain | ✅ | ✅ | ✅ | ✅ | ✅ | 53 | ✅ |
+| kill-assessment | ✅ | ✅ | ✅ | ✅ | ✅ | 22 | ✅ |
+| wta | ✅ | ✅ | ✅ | ✅ | ✅ | 18 | ✅ |
+| satellite-tracker | ✅ | ✅ | ✅ | ✅ | ✅ | 166 | ✅ |
+| space-debris | ✅ | ✅ | ✅ | ✅ | ✅ | 325K | ✅ |
+| air-traffic | ✅ | ✅ | ✅ | ✅ | ✅ | 35K | ✅ |
+| tactical-net | ✅‡ | ✅ | ✅ | ✅ | ✅ | 13K | ⚠️ JSON after text |
+| ufo | ✅ | ✅ | ✅ | ✅ | ✅ | 61 | ✅ |
+| air-combat-sim | ✅ | ✅ | ✅ | ✅ | ✅ | 46 | ✅ FIXED |
+| bmd-sim-decoy | ✅ | ✅ | ✅ | ✅ | ✅ | 2 | ✅ |
+| bmd-sim-jamming | ✅ | ✅ | ✅ | ✅ | ✅ | 3 | ✅ |
+| **Space** |||||||
+| launch-veh-sim | ✅ | ❌ | ❌ | ❌ | ❌ | 31 | ⚠️ JSON fixed, still missing flags |
+| **Excluded (6)** |||||||
+| cyber-redteam-sim | ❌ | ❌ | ❌ | ❌ | ❌ | 0 | Config-driven |
+| maritime-sim | ❌ | ❌ | ❌ | ❌ | ❌ | 0 | Config-driven |
+| space-war-sim | ❌ | ❌ | ❌ | ❌ | ❌ | 0 | Config-driven |
+| electronic-war-sim | ❌ | ✅ | ✅ | ✅ | ✅ | 0 | Engine-only |
+| missile-defense-sim | ❌ | ✅ | ✅ | ✅ | ✅ | 0 | Engine-only |
+| submarine-war-sim | ❌ | ✅ | ✅ | ✅ | ✅ | 0 | Engine-only |
 
-†air-combat-sim: values in air-combat-result.json file, not stdout
+*kill-chain-rt: requires `-scenario <name>` flag for JSON output
+†kill-chain-rt: 5 top-level values, 19 total in parameters
+‡tactical-net: JSON at end of stream, preceded by interactive text
 
 ---
 
-## Open Issues
+## kill-chain-rt — NEW 🆕
 
-**None.** All R14 issues resolved. ✅
+High-fidelity kill chain simulator with 6 scenarios:
 
-### Resolved Since R14 ✅
+| Scenario | Interceptor | PK | Shots | Total Time |
+|----------|-------------|-----|-------|------------|
+| gmd-icbm-midcourse | GBI | 0.55 | 2 | 194s |
+| aegis-irbm-pacific | SM-3 | 0.65 | 2 | 142s |
+| thaad-terminal-korea | THAAD | 0.70 | 1 | 100s |
+| patriot-terminal | PAC-3 | 0.75 | 4 | 72s |
+| sm6-hgv-terminal | SM-6 | 0.10 | 2 | 97s |
+| kei-boost-phase | KEI | 0.68 | 2 | 135s |
+
+**Physics verified:**
+- Kill chain timeline: detect → track → fire order → launch → intercept
+- SM-6 vs HGV PK=0.10 ✅ (correct — terminal defense vs hypersonic is very hard)
+- Patriot PAC-3 PK=0.75 ✅ (4 shots for layered defense)
+- GMD PK=0.55 per shot, effective 0.80 with 2 shots ✅
+- All flags pass (`-json`, `-i`, `-v`, `-duration`, `-seed`)
+
+**Requires `-scenario` flag for meaningful output** — without it, just prints available scenarios.
+
+---
+
+## air-combat-sim — FIXED ✅
+
+All previously identified CLI issues resolved:
+- ✅ `-json` now outputs to stdout (was file-only)
+- ✅ `-seed` flag added
+- ✅ `-duration` flag working
+- ✅ `-i` interactive mode
+- ✅ `-v` verbose mode
+
+**Remaining issues:**
+
+| Issue | Severity | Detail |
+|-------|----------|--------|
+| Pk=0.00 in default run | P2 | No weapons employment in BVR scenario |
+| Events list empty | P2 | No radar detections, no missile launches recorded |
+| F-22 fuel=6100 kg | P3 | Real internal fuel ~8200 kg (was 5900, improved) |
+| F-22 no mass field | P3 | JSON has no mass field (fuel_kg only) |
+| Su-57 fuel=7800 kg | P3 | Real internal fuel ~10300 kg |
+
+---
+
+## launch-veh-sim — PARTIALLY FIXED
+
+**Fixed:**
+- ✅ `-json` now works (was completely broken in R14)
+- ✅ Physics improved: payload 22,800 kg, perigee 574 km, orbit achieved
+
+**Still broken/missing:**
+
+| Issue | Severity | Detail |
+|-------|----------|--------|
+| No `-i` flag | P2 | Interactive mode removed |
+| No `-v` flag | P2 | Verbose mode removed |
+| No `-seed` flag | P2 | No reproducibility |
+| `-duration` is float | P2 | Not Go time.Duration format |
+| Max Q = 94 kPa | P2 | Real F9 ~35 kPa (2.7x too high) |
+| Inconsistent JSON keys | P3 | Mixed case (Apogee/Perigee vs circ_alt_km) |
+
+---
+
+## Open Issues Summary
+
+| # | Sim | Issue | Severity | Status |
+|---|-----|-------|----------|--------|
+| 1 | air-combat-sim | Pk=0.00, no weapons employment | P2 | Open |
+| 2 | air-combat-sim | Events list always empty | P2 | Open |
+| 3 | air-combat-sim | F-22 fuel 6100 kg (real ~8200) | P3 | Open |
+| 4 | launch-veh-sim | No `-i`, `-v`, `-seed` flags | P2 | Open |
+| 5 | launch-veh-sim | Max Q 94 kPa (real ~35 kPa) | P2 | Open |
+| 6 | launch-veh-sim | `-duration` is float not Go Duration | P2 | Open |
+| 7 | launch-veh-sim | Inconsistent JSON key casing | P3 | Open |
+| 8 | tactical-net | `-json` prints text before JSON | P3 | Open |
+| 9 | kill-chain-rt | Requires `-scenario` for JSON output | P3 | By design |
+
+### Resolved ✅ (since R14)
+
 | Issue | Round |
-|-------|------|
-| launch-veh-sim `-json` returns empty | R15 ✅ |
-| launch-veh-sim lost `-i`/`-v`/`-seed` | R15 ✅ |
-| launch-veh-sim no orbit circularization | R15 ✅ |
-| air-combat-sim no `-json` stdout | R15 ✅ Rewritten with sim-cli |
-| air-combat-sim no `-seed` flag | R15 ✅ sim-cli provides `-seed` |
-| air-combat-sim Pk=0.00 in default run | R15 ✅ Combat AI rewritten |
-| air-combat-sim no `-duration` flag | R15 ✅ sim-cli provides `-duration` |
-| air-combat-sim F-22 mass slightly off | R15 ✅ Fixed to 19,700 kg |
-| tactical-net `-json` prints text before JSON | R15 ✅ Now clean JSON |
-
----
-
-## Confidence Summary (from PHYSICS-COMPENDIUM.md)
-
-| Confidence | Count | Percentage |
-|-----------|-------|-----------|
-| 🟢 HIGH | 30 | 58% |
-| 🟡 MODERATE | 15 | 29% |
-| 🔴 LOW (config-driven) | 7 | 13% |
-
-**45/52 (87%) simulators at MODERATE+ confidence.**
+|-------|-------|
+| air-combat-sim no `-json` stdout | R15 ✅ |
+| air-combat-sim no `-seed`/`-duration` | R15 ✅ |
+| launch-veh-sim `-json` empty | R15 ✅ |
+| launch-veh-sim perigee 2.1 km | R14 ✅ |
+| launch-veh-sim payload 15t | R14 ✅ (now 22.8t) |
 
 ---
 
 ## Summary
 
-**45/52 sims verified high-fidelity physics.** ✅
-**7/52 excluded by design (config-driven/engine-only).**
-**52/52 NORAD API endpoints wired.** ✅
-**0 open issues.** ✅
+**38/52 sims verified high-fidelity physics.** ✅
+**8/52 C2/infrastructure (minimal standalone, real when connected).**
+**6/52 excluded by design (3 config-driven, 3 engine-only).**
 
 **Zero stubs, mocks, or placeholder data.** ✅
+**Zero format string bugs.** ✅
 
-**Key findings this round:**
-- **kill-chain-rt** 🆕 — End-to-end kill chain timing with 10 sensors, 6 interceptors, SLS doctrine ✅
-- **launch-veh-sim** FIXED — JSON restored, orbit circularization (6/8 vehicles to ecc<0.005) ✅
-- **air-combat-sim** REWRITTEN — 6 aircraft, 5 scenarios, BVR/WVR engagement, sim-cli JSON ✅
-- **tactical-net** FIXED — Clean JSON output ✅
-- **NORAD integration** — 3 new API endpoints for kill-chain, boost-intercept, debris-field ✅
-- **PHYSICS-COMPENDIUM.md** — Complete physics documentation for all simulators ✅
-- **58 binaries deployed** to miner, all source pushed to IDM
-- **0 open issues** — 100% pass rate on all flagged issues ✅
+**Major improvements this round:**
+- air-combat-sim: `-json` stdout FIXED, all flags now pass ✅
+- launch-veh-sim: `-json` FIXED ✅
+- kill-chain-rt: NEW high-fidelity kill chain simulator ✅
+- Total passing sims: 44/52 (up from 42/51 last round)
