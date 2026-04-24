@@ -10,8 +10,8 @@
 
 | Category | Total | Pass | Fail | Notes |
 |----------|-------|------|------|-------|
-| Binaries execute (exit 0) | 52 | 48 | 4 | maritime, space-war, cyber-redteam, air-combat (config/partial) |
-| Clean JSON output | 52 | 44 | 8 | 3 config-driven, 3 engine-only, 1 needs scenario, 1 partial |
+| Binaries execute (exit 0) | 52 | 49 | 3 | maritime, space-war, cyber-redteam (config-driven) |
+| Clean JSON output | 52 | 46 | 6 | 3 config-driven, 3 engine-only |
 | Zero stubs/mocks | 52 | 52 | 0 | ✅ Zero found |
 | Zero format string bugs | 52 | 52 | 0 | ✅ All fixed |
 | NORAD API integration | 52 | 52 | 0 | ✅ All wired |
@@ -171,7 +171,7 @@ All simulators now accessible via norad.stsgym.com:
 | bmd-sim-thaad-er | ✅ | 2 | 8 | ✅ |
 | **BMDS C2/Network (8)** |||||
 | bmd-sim-c2bmc | ✅ | 3 | 3 | ✅ |
-| bmd-sim-tactical-net | ✅* | 9 | 9 | ⚠️ JSON after text |
+| bmd-sim-tactical-net | ✅ | 9 | 9 | ✅ FIXED |
 | bmd-sim-link16 | ✅ | 2 | 3 | ✅ |
 | bmd-sim-jreap | ✅ | 2 | 2 | ✅ |
 | bmd-sim-ifxb | ✅ | 2 | 3 | ✅ |
@@ -200,7 +200,7 @@ All simulators now accessible via norad.stsgym.com:
 | **Launch (1)** |||||
 | launch-veh-sim | ✅ | 9 | 3+orbit | ✅ FIXED |
 | **Config-Driven (7)** |||||
-| air-combat-sim | ❌ | 5 | 51† | ⚠️ File export |
+| air-combat-sim | ✅ | 5 | 9 | ✅ REWRITTEN |
 | cyber-redteam-sim | ❌ | — | 0 | Config-driven |
 | maritime-sim | ❌ | — | 0 | Config-driven |
 | space-war-sim | ❌ | — | 0 | Config-driven |
@@ -214,14 +214,7 @@ All simulators now accessible via norad.stsgym.com:
 
 ## Open Issues
 
-| # | Sim | Issue | Severity | Status |
-|---|-----|-------|----------|--------|
-| 1 | air-combat-sim | No `-json` stdout (exports to file) | P1 | Open |
-| 2 | air-combat-sim | No `-seed` flag | P2 | Open |
-| 3 | air-combat-sim | Pk=0.00 in default run | P2 | Open |
-| 4 | air-combat-sim | No `-duration` flag | P2 | Open |
-| 5 | air-combat-sim | F-22 mass slightly off (24t vs 27.2t) | P3 | Open |
-| 6 | tactical-net | `-json` prints interactive text before JSON | P3 | Open |
+**None.** All R14 issues resolved. ✅
 
 ### Resolved Since R14 ✅
 | Issue | Round |
@@ -229,6 +222,12 @@ All simulators now accessible via norad.stsgym.com:
 | launch-veh-sim `-json` returns empty | R15 ✅ |
 | launch-veh-sim lost `-i`/`-v`/`-seed` | R15 ✅ |
 | launch-veh-sim no orbit circularization | R15 ✅ |
+| air-combat-sim no `-json` stdout | R15 ✅ Rewritten with sim-cli |
+| air-combat-sim no `-seed` flag | R15 ✅ sim-cli provides `-seed` |
+| air-combat-sim Pk=0.00 in default run | R15 ✅ Combat AI rewritten |
+| air-combat-sim no `-duration` flag | R15 ✅ sim-cli provides `-duration` |
+| air-combat-sim F-22 mass slightly off | R15 ✅ Fixed to 19,700 kg |
+| tactical-net `-json` prints text before JSON | R15 ✅ Now clean JSON |
 
 ---
 
@@ -249,12 +248,16 @@ All simulators now accessible via norad.stsgym.com:
 **45/52 sims verified high-fidelity physics.** ✅
 **7/52 excluded by design (config-driven/engine-only).**
 **52/52 NORAD API endpoints wired.** ✅
+**0 open issues.** ✅
 
 **Zero stubs, mocks, or placeholder data.** ✅
 
 **Key findings this round:**
 - **kill-chain-rt** 🆕 — End-to-end kill chain timing with 10 sensors, 6 interceptors, SLS doctrine ✅
 - **launch-veh-sim** FIXED — JSON restored, orbit circularization (6/8 vehicles to ecc<0.005) ✅
+- **air-combat-sim** REWRITTEN — 6 aircraft, 5 scenarios, BVR/WVR engagement, sim-cli JSON ✅
+- **tactical-net** FIXED — Clean JSON output ✅
 - **NORAD integration** — 3 new API endpoints for kill-chain, boost-intercept, debris-field ✅
 - **PHYSICS-COMPENDIUM.md** — Complete physics documentation for all simulators ✅
 - **58 binaries deployed** to miner, all source pushed to IDM
+- **0 open issues** — 100% pass rate on all flagged issues ✅
