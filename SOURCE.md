@@ -16,7 +16,7 @@ Every binary in `binaries/linux-x86/` mapped to its source repo:
 | # | Binary | Source Repo (IDM) | Branch | Local Path on darth | CLI Status |
 |---|--------|-------------------|--------|---------------------|------------|
 | 1 | air-combat-sim | bmd-sim-air-combat | master | /home/wez/bmd-sim-air-combat | ✅ -json -scenario |
-| 2 | air-traffic | bmd-sim-air-traffic | master | *(not cloned yet)* | ✅ -json -scenario |
+| 2 | air-traffic | bmd-sim-air-traffic | master |  | ✅ -json -scenario |
 | 3 | bmd-sim-aegis | bmd-sim-aegis | master | /home/wez/bmd-sim-aegis | ✅ -json -scenario |
 | 4 | bmd-sim-atmospheric | bmd-sim-atmospheric | main | /home/wez/bmd-sim-atmospheric | ✅ -json -scenario |
 | 5 | bmd-sim-c2bmc | bmd-sim-c2bmc | main | /home/wez/bmd-sim-c2bmc | ✅ -json -scenario |
@@ -35,8 +35,8 @@ Every binary in `binaries/linux-x86/` mapped to its source repo:
 | 18 | bmd-sim-jreap | bmd-sim-jreap | main | /home/wez/bmd-sim-jreap | ✅ -json -scenario |
 | 19 | bmd-sim-jrsc | bmd-sim-jrsc | main | /home/wez/bmd-sim-jrsc | ✅ -json -scenario |
 | 20 | bmd-sim-lrdr | bmd-sim-lrdr | master | /home/wez/bmd-sim-lrdr | ✅ -json -scenario |
-| 21 | bmd-sim-mrbm | bmd-sim-mrbm | master | *(not cloned yet)* | ✅ -json -scenario |
-| 22 | bmd-sim-nuclear-efx | bmd-sim-nuclear-efx | master | *(not cloned yet)* | ✅ -json -scenario |
+| 21 | bmd-sim-mrbm | bmd-sim-mrbm | master |  | ✅ -json -scenario |
+| 22 | bmd-sim-nuclear-efx | bmd-sim-nuclear-efx | master |  | ✅ -json -scenario |
 | 23 | bmd-sim-patriot | bmd-sim-patriot | master | /home/wez/bmd-sim-patriot | ✅ -json -scenario |
 | 24 | bmd-sim-sbirs | bmd-sim-sbirs | main | /home/wez/bmd-sim-sbirs | ✅ -json -scenario |
 | 25 | bmd-sim-slcm | bmd-sim-slcm | master | /home/wez/bmd-sim-slcm | ✅ -json -scenario |
@@ -49,28 +49,28 @@ Every binary in `binaries/linux-x86/` mapped to its source repo:
 | 32 | bmd-sim-tpy2 | bmd-sim-tpy2 | master | /home/wez/bmd-sim-tpy2 | ✅ -json -scenario |
 | 33 | bmd-sim-uewr | bmd-sim-uewr | master | /home/wez/bmd-sim-uewr | ✅ -json -scenario |
 | 34 | boost-intercept | bmd-sim-boost-intercept | master | /home/wez/bmd-sim-boost-intercept | ✅ -json -scenario |
-| 35 | cyber-redteam-sim | cyber-redteam-sim | main | *(not cloned yet)* | ⚠️ no -json flag |
+| 35 | cyber-redteam-sim | cyber-redteam-sim | main |  | ⚠️ no -json flag |
 | 36 | debris-field | bmd-sim-debris-field | master | /home/wez/bmd-sim-debris-field | ✅ -json -scenario |
 | 37 | electronic-war-sim | electronic-war-sim | main | /home/wez/electronic-war-sim | ✅ -json -scenario |
 | 38 | emp-effects | bmd-sim-emp-effects | master | /home/wez/bmd-sim-emp-effects | ✅ -json -scenario |
-| 39 | engagement-chain | bmd-sim-engagement-chain | master | *(not cloned yet)* | ✅ -json -scenario |
+| 39 | engagement-chain | bmd-sim-engagement-chain | master |  | ✅ -json -scenario |
 | 40 | hgv | bmd-sim-hgv | main | /home/wez/bmd-sim-hgv | ✅ -json -scenario |
 | 41 | ir-signature | bmd-sim-ir-signature | master | /home/wez/bmd-sim-ir-signature | ✅ -json -scenario |
-| 42 | kill-assessment | bmd-sim-kill-assessment | master | *(not cloned yet)* | ✅ -json -scenario |
+| 42 | kill-assessment | bmd-sim-kill-assessment | master |  | ✅ -json -scenario |
 | 43 | kill-chain-rt | bmd-sim-kill-chain-rt | master | /home/wez/bmd-sim-kill-chain-rt | ✅ -json -scenario |
 | 44 | launch-veh-sim | launch-veh-sim | main | /home/wez/launch-veh-sim | ✅ -json -vehicle |
-| 45 | maritime-sim | maritime-sim | main | *(not cloned yet)* | ⚠️ needs config file |
+| 45 | maritime-sim | maritime-sim | main |  | ⚠️ needs config file |
 | 46 | missile-defense-sim | missile-defense-sim | main | /home/wez/missile-defense-sim | ✅ -json -scenario |
 | 47 | population-impact-sim | population-impact-sim | main | /home/wez/population-impact-sim | ✅ -json -scenario |
 | 48 | rcs | bmd-sim-rcs | master | /home/wez/bmd-sim-rcs | ✅ -json -scenario |
-| 49 | satellite-tracker | bmd-sim-satellite-tracker | master | *(not cloned yet)* | ✅ -json -scenario |
+| 49 | satellite-tracker | bmd-sim-satellite-tracker | master |  | ✅ -json -scenario |
 | 50 | satellite-weapon | bmd-sim-satellite-weapon | master | /home/wez/bmd-sim-satellite-weapon | ✅ -json -scenario |
-| 51 | space-debris | bmd-sim-space-debris | master | *(not cloned yet)* | ✅ -json -scenario |
-| 52 | space-war-sim | space-war-sim | main | *(not cloned yet)* | ⚠️ needs config file |
+| 51 | space-debris | bmd-sim-space-debris | master |  | ✅ -json -scenario |
+| 52 | space-war-sim | space-war-sim | main |  | ⚠️ needs config file |
 | 53 | submarine-war-sim | submarine-war-sim | main | /home/wez/submarine-war-sim | ✅ -json -scenario |
 | 54 | tactical-net | bmd-sim-tactical-net | master | /home/wez/bmd-sim-tactical-net | ✅ -json -scenario |
 | 55 | ufo | bmd-sim-ufo | master | /home/wez/bmd-sim-ufo | ✅ -json -scenario |
-| 56 | wta | bmd-sim-wta | master | *(not cloned yet)* | ✅ -json -scenario |
+| 56 | wta | bmd-sim-wta | master |  | ✅ -json -scenario |
 
 **Summary:** 56 binaries total. 51 have full CLI support. 3 have issues. 2 need config files.
 
