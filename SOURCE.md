@@ -49,7 +49,7 @@ Every binary in `binaries/linux-x86/` mapped to its source repo:
 | 32 | bmd-sim-tpy2 | bmd-sim-tpy2 | master | /home/wez/bmd-sim-tpy2 | ✅ -json -scenario |
 | 33 | bmd-sim-uewr | bmd-sim-uewr | master | /home/wez/bmd-sim-uewr | ✅ -json -scenario |
 | 34 | boost-intercept | bmd-sim-boost-intercept | master | /home/wez/bmd-sim-boost-intercept | ✅ -json -scenario |
-| 35 | cyber-redteam-sim | cyber-redteam-sim | main | /home/wez/cyber-redteam-sim | ⚠️ no -json flag |
+| 35 | cyber-redteam-sim | cyber-redteam-sim | main | /home/wez/cyber-redteam-sim | ✅ -json -scenario |
 | 36 | debris-field | bmd-sim-debris-field | master | /home/wez/bmd-sim-debris-field | ✅ -json -scenario |
 | 37 | electronic-war-sim | electronic-war-sim | main | /home/wez/electronic-war-sim | ✅ -json -scenario |
 | 38 | emp-effects | bmd-sim-emp-effects | master | /home/wez/bmd-sim-emp-effects | ✅ -json -scenario |
@@ -59,14 +59,14 @@ Every binary in `binaries/linux-x86/` mapped to its source repo:
 | 42 | kill-assessment | bmd-sim-kill-assessment | master | /home/wez/bmd-sim-kill-assessment | ✅ -json -scenario |
 | 43 | kill-chain-rt | bmd-sim-kill-chain-rt | master | /home/wez/bmd-sim-kill-chain-rt | ✅ -json -scenario |
 | 44 | launch-veh-sim | launch-veh-sim | main | /home/wez/launch-veh-sim | ✅ -json -vehicle |
-| 45 | maritime-sim | maritime-sim | main | /home/wez/maritime-sim | ⚠️ needs config file |
+| 45 | maritime-sim | maritime-sim | main | /home/wez/maritime-sim | ✅ -json -scenario -aar |
 | 46 | missile-defense-sim | missile-defense-sim | main | /home/wez/missile-defense-sim | ✅ -json -scenario |
 | 47 | population-impact-sim | population-impact-sim | main | /home/wez/population-impact-sim | ✅ -json -scenario |
 | 48 | rcs | bmd-sim-rcs | master | /home/wez/bmd-sim-rcs | ✅ -json -scenario |
 | 49 | satellite-tracker | bmd-sim-satellite-tracker | master | /home/wez/bmd-sim-satellite-tracker | ✅ -json -scenario |
 | 50 | satellite-weapon | bmd-sim-satellite-weapon | master | /home/wez/bmd-sim-satellite-weapon | ✅ -json -scenario |
 | 51 | space-debris | bmd-sim-space-debris | master | /home/wez/bmd-sim-space-debris | ✅ -json -scenario |
-| 52 | space-war-sim | space-war-sim | main | /home/wez/space-war-sim | ⚠️ needs config file |
+| 52 | space-war-sim | space-war-sim | main | /home/wez/space-war-sim | ✅ -json -scenario -aar |
 | 53 | submarine-war-sim | submarine-war-sim | main | /home/wez/submarine-war-sim | ✅ -json -scenario |
 | 54 | tactical-net | bmd-sim-tactical-net | master | /home/wez/bmd-sim-tactical-net | ✅ -json -scenario |
 | 55 | ufo | bmd-sim-ufo | master | /home/wez/bmd-sim-ufo | ✅ -json -scenario |
