@@ -1,0 +1,27 @@
+stages:
+  - test
+  - lint
+
+variables:
+  GO_VERSION: "1.22"
+
+go_test:
+  stage: test
+  image: golang:${GO_VERSION}
+  before_script:
+    - go mod download
+  script:
+    - go test ./... -count=1 -v -race
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+go_lint:
+  stage: lint
+  image: golangci/golangci-lint:latest
+  script:
+    - golangci-lint run ./... --timeout 5m
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
