@@ -15,7 +15,6 @@ go_test:
     - |
       if grep -q "no packages to test\|matched no packages" test-output.txt; then
         echo "No Go packages found at root level - this is expected for a monorepo"
-        exit 0
       fi
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
