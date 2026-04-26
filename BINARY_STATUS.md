@@ -69,5 +69,6 @@
 | air-combat-sim | Air combat simulator | ✅ |
 | electronic-war-sim | Electronic warfare simulator | ✅ |
 | ufo | UFO/UAP analysis (30 test cases) | ✅ |
+| intel-collection-sim | Intelligence collection simulator (13 packages, 280 tests) | ✅ |
 
-**Total: 56 binaries**debris-field | 2.5M | NASA EVOLVE fragment model, 6 scenarios, collision risk, orbital decay | PASS
+**Total: 57 binaries**
