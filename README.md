@@ -1,6 +1,6 @@
 # Forge-Sims
 
-**Ballistic Missile Defense System simulation suite — 56 binaries, physically accurate, JSON-native.**
+**Ballistic Missile Defense System simulation suite — 57 binaries, physically accurate, JSON-native.**
 
 ## Overview
 
@@ -24,7 +24,7 @@ All simulations output machine-readable JSON for integration with higher-level w
 ./binaries/linux-x86/launch-veh-sim -scenario list
 ```
 
-## Binary Count: 56
+## Binary Count: 57
 
 | Category | Count | Description |
 |----------|-------|-------------|
@@ -37,6 +37,7 @@ All simulations output machine-readable JSON for integration with higher-level w
 | **Engine Sims** | 3 | Electronic warfare, missile defense, submarine warfare (Go libraries) |
 | **Standalone** | 6 | Launch vehicle, satellite weapon, air combat, boost intercept, HGV, tactical net |
 | **Config-driven** | 3 | Cyber red team, maritime, space warfare (YAML scenario files) |
+| **Intelligence** | 1 | Intel collection, counterintelligence, covert action (Go library) |
 
 ## About Each Simulator
 
@@ -101,6 +102,7 @@ Detailed physics, fidelity assessment, and improvement recommendations for every
 | cyber-redteam-sim | [about/cyber-redteam-sim.md](about/cyber-redteam-sim.md) | Unknown | Cyber red team (no source) |
 | maritime-sim | [about/maritime-sim.md](about/maritime-sim.md) | Unknown | Maritime warfare (config-driven) |
 | space-war-sim | [about/space-war-sim.md](about/space-war-sim.md) | Unknown | Space warfare (config-driven) |
+| intel-collection-sim | [docs/intel-collection-sim-README.md](docs/intel-collection-sim-README.md) | High | Intelligence collection & counterintelligence (Go library) |
 
 ## NORAD Integration
 
