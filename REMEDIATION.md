@@ -1,6 +1,6 @@
-# FORGE-Sims Remediation Plan — Round 18 Update
+# FORGE-Sims Remediation Plan — Round 20 Update
 
-**Date:** 2026-04-26
+**Date:** 2026-04-27
 **Goal:** Bring remaining sims to full pass with verified high-fidelity physics
 
 ---
@@ -9,42 +9,32 @@
 
 | Sim | What was done | Round |
 |-----|-------------|-------|
-| launch-veh-sim | Max Q, -i/-v/-seed, JSON, stage sep | R17 |
-| air-combat-sim | Full BVR kill chain, Pk>0, events | R18 |
+| launch-veh-sim | Max Q, -i/-v/-seed, JSON, stage sep, circularization | R17-R20 |
+| air-combat-sim | Full BVR kill chain, Pk>0, events, F-22 fuel fix | R18-R20 |
 | bmd-sim-jamming | -power/-freq/-range flags, data section | R18 |
 | bmd-sim-jreap | -protocol/-messages flags, data section | R18 |
 | bmd-sim-jrsc | -sensors/-alert flags, data section | R18 |
 | bmd-sim-link16 | -participants/-messages flags, data section | R18 |
+| bmd-sim-c2bmc | Moved computed data to `data` section | R19 |
+| bmd-sim-decoy | Moved computed data to `data` section | R19 |
+| bmd-sim-gfcb | Moved computed data to `data` section | R19 |
+| bmd-sim-ifxb | Moved computed data to `data` section | R19 |
+| hgv/bmd-sim-hgv | Fixed JSON preamble, added detection data section | R19-R20 |
+| ir-signature | Fixed JSON preamble, added detection data section | R19 |
+| kill-chain-rt | Fixed JSON for infeasible scenarios, added data section | R20 |
 
 ---
 
-## Remaining Work
+## Remaining Work (P3)
 
-### Quick Wins (~30 min total)
-
-| # | Sim | Fix | Lines |
-|---|-----|-----|-------|
-| 1 | bmd-sim-c2bmc | Move computed data from `parameters` to `data` section | ~30 |
-| 2 | bmd-sim-decoy | Move computed data from `parameters` to `data` section | ~30 |
-| 3 | bmd-sim-gfcb | Move computed data from `parameters` to `data` section | ~30 |
-| 4 | bmd-sim-ifxb | Move computed data from `parameters` to `data` section | ~30 |
-| 5 | hgv | Strip text preamble before JSON | ~5 |
-| 6 | ir-signature | Strip text preamble before JSON | ~5 |
-| 7 | kill-chain-rt | Strip text preamble before JSON | ~5 |
-
-### Medium Effort (~1-2 hours each)
-
-| # | Sim | Fix | Lines |
-|---|-----|-----|-------|
-| 8 | population-impact-sim | Add `-json` flag with data section | ~50-100 |
-| 9 | emp-effects | Add `-scenario` default for `-json` mode | ~20 |
-| 10 | rcs | Add `-threat` default for `-json` mode | ~20 |
-| 11 | satellite-weapon | Add `-scenario` default for `-json` mode | ~20 |
-
-### Low Priority (by design)
-
-| # | Sim | Issue |
-|---|-----|-------|
-| 12 | cyber-redteam-sim | Config-driven, needs `-config` flag |
-| 13 | maritime-sim | Config-driven, needs `-aar` flag |
-| 14 | space-war-sim | Config-driven, needs `-aar` flag |
+| # | Sim | Issue | Priority |
+|---|-----|-------|----------|
+| 1 | Vulcan Centaur | Low-TWR S2 crashes (needs guidance algorithm) | P3 |
+| 2 | Delta IV | Low-TWR S2 crashes (needs guidance algorithm) | P3 |
+| 3 | Falcon Heavy | Orbit at 793 km (excess delta-V for payload) | P3 |
+| 4 | Atlas V | Orbit at 754 km (excess delta-V) | P3 |
+| 5 | Ariane 6 | Orbit at 1569 km (excess delta-V) | P3 |
+| 6 | intel-collection-sim | Subcommand pattern, not standard `-json` | P3 |
+| 7 | cyber-redteam-sim | Config-driven by design | P3 |
+| 8 | maritime-sim | Config-driven by design | P3 |
+| 9 | space-war-sim | Config-driven by design | P3 |
