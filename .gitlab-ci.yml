@@ -7,7 +7,7 @@ variables:
 
 go_test:
   stage: test
-  image: golang:${GO_VERSION}
+  image: forge-container.wezzel.com:8443/library/golang:${GO_VERSION}
   before_script:
     - go mod download || true
   script:
@@ -22,7 +22,7 @@ go_test:
 
 go_lint:
   stage: lint
-  image: golangci/golangci-lint:latest
+  image: forge-container.wezzel.com:8443/golangci/golangci-lint:latest
   script:
     - golangci-lint run ./... --timeout 5m || true
   allow_failure: true
