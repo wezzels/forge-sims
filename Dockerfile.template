@@ -1,6 +1,6 @@
 # Common Dockerfile for FORGE-Sims microservices
 # Copy this into each bmd-sim-* repo root
-FROM golang:1.22-alpine AS builder
+FROM forge-container.wezzel.com:8443/library/golang:1.22-alpine AS builder
 
 WORKDIR /app
 COPY go.mod go.sum ./
@@ -8,7 +8,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build -o /sim ./cmd/...
 
-FROM alpine:3.19
+FROM forge-container.wezzel.com:8443/library/alpine:3.19
 RUN apk add --no-cache ca-certificates
 COPY --from=builder /sim /sim
 EXPOSE 8080

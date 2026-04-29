@@ -15,14 +15,14 @@ REPOS=(
   bmd-sim-space-weather bmd-sim-atmospheric
 )
 
-DOCKERFILE='FROM golang:1.22-alpine AS builder
+DOCKERFILE='FROM forge-container.wezzel.com:8443/library/golang:1.22-alpine AS builder
 WORKDIR /app
 COPY go.mod go.sum* ./
 RUN go mod download || true
 COPY . .
 RUN CGO_ENABLED=0 go build -o /sim ./cmd/...
 
-FROM alpine:3.19
+FROM forge-container.wezzel.com:8443/library/alpine:3.19
 RUN apk add --no-cache ca-certificates
 COPY --from=builder /sim /sim
 EXPOSE 8080
