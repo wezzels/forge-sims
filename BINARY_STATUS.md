@@ -1,7 +1,7 @@
 # FORGE-Sims Binary Status
 
 **Last Updated:** 2026-04-27 (Round 20)
-**Total Binaries:** 65 (63 sim binaries + 2 install scripts)
+**Total Binaries:** 66 (64 sim binaries + 2 install scripts)
 **Platforms:** linux-x86, darwin-arm64, windows-amd64
 
 ## BMD Simulators (36 binaries)
@@ -88,6 +88,7 @@
 | logistics-sustainment-sim | Supply chain/logistics | ✅ | ✅ | — |
 | nuclear-effects-sim | Nuclear detonation modeling | ✅ | ✅ | — |
 | space-data-network-sim | Satellite network resilience | ✅ | ✅ | — |
+| sensor-jreap | JREAP-C sensor simulator (8 sensors, UDP/TCP) | ✅ | ✅ | FORGE-C2 data path |
 
 ## Config-Driven Sims (3 binaries)
 
@@ -126,3 +127,4 @@
 
 - ✅ All simulators cross-compile for darwin-arm64 and windows-amd64
 - ⚠️ bmd-sim-gmd and bmd-sim-lrdr had build errors in earlier rounds (now resolved)
+

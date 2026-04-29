@@ -70,6 +70,7 @@ Every binary in `binaries/linux-x86/` mapped to its source repo:
 | 53 | submarine-war-sim | submarine-war-sim | main | /home/wez/submarine-war-sim | ✅ -json -scenario |
 | 54 | tactical-net | bmd-sim-tactical-net | master | /home/wez/bmd-sim-tactical-net | ✅ -json -scenario |
 | 55 | ufo | bmd-sim-ufo | master | /home/wez/bmd-sim-ufo | ✅ -json -scenario |
+| 56 | sensor-jreap | forge-sensors | main | /home/wez/forge-sensors | ✅ -id -type -rate -jreap-udp -jreap-tcp |
 | 56 | wta | bmd-sim-wta | master | /home/wez/bmd-sim-wta | ✅ -json -scenario |
 
 **Summary:** 56 binaries total. 51 have full CLI support. 3 have issues. 2 need config files.

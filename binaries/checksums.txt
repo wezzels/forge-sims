@@ -3,3 +3,7 @@ ab5823ca510363de78118faf931d7e2a57a4d845c3372cf60270d96cb3d49ca1  cyber-redteam-
 35c711dd1d676217ef5109ad50ce39876b2a1f0564320d3a9ea4d8c970a24db0  cyber-redteam-sim-0.2.0-linux-amd64.tar.gz
 cbbbbf87760f279535e294c8d207a782f271b03fb0d8221c0d3b45979158a5b4  cyber-redteam-sim-0.2.0-linux-arm64.tar.gz
 b55080d207fd31983541dbf73df03e4d39c4f309da78eef50514dae16cc86b4c  cyber-redteam-sim-0.2.0-windows-amd64.zip
+a4fd812763934d88d795f35c379301b78bf1206a18b7721c4d219ce348033386  binaries/linux-x86/sensor-jreap
+81c0f0d5e35f98e1704cc9becc5dba8b596c8ef86b0855c490afba080bef54df  binaries/darwin-amd64/sensor-jreap
+92d2f4563b67597728b0337ffbaf0487d4fa5a91ba7c8e64860d6ed7cb96b8d2  binaries/darwin-arm64/sensor-jreap
+eb8b8af7df072edd97f1ac224c81846cc078ee82426c564c05bbb58a4bbe1147  binaries/linux-arm64/sensor-jreap
