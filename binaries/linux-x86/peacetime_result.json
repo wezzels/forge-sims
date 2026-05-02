@@ -1,0 +1,28 @@
+{
+  "name": "Peacetime Baseline",
+  "description": "Normal SDN operations without threats",
+  "start_time": "2026-05-02T13:04:48-06:00",
+  "duration_min": 0.1,
+  "time_series": [
+    {
+      "time_min": 15,
+      "total_sats": 791,
+      "active_links": 1590,
+      "total_bw_gbps": 3192,
+      "coverage_pct": 100,
+      "routes_valid": 5,
+      "routes_total": 7
+    }
+  ],
+  "threat_log": null,
+  "summary": {
+    "final_sats": 791,
+    "final_links": 1590,
+    "final_coverage_pct": 100,
+    "final_routes_pct": 71.42857142857143,
+    "resilience_score": 92.85714285714286,
+    "threats_executed": 0,
+    "sats_lost": 0,
+    "peak_latency_ms": 0
+  }
+}
