@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: forge
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forge-sims-config
+  namespace: forge
+data:
+  NORAD_API_URL: "http://norad-sim:5008"
+  RUNNER_HOST: "darth"
+  RUNNER_PORT: "8080"
+  BIN_DIR: "/host-bin"
+---
+# Simulators that run as periodic jobs
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kill-chain-rt
+  namespace: forge
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: kill-chain-rt
+            image: forge-sims:latest
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/kill-chain-rt"]
+            args: ["-scenario", "gmd-icbm-midcourse", "-json"]
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: satellite-weapon
+  namespace: forge
+spec:
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: satellite-weapon
+            image: forge-sims:latest
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/satellite-weapon"]
+            args: ["-scenario", "direct-ascent-leo", "-json"]
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: launch-veh-sim
+  namespace: forge
+spec:
+  schedule: "0 */6 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: launch-veh-sim
+            image: forge-sims:latest
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/launch-veh-sim"]
+            args: ["-vehicle", "falcon-heavy", "-json"]
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: space-data-network-sim
+  namespace: forge
+spec:
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: space-data-network-sim
+            image: forge-sims:latest
+            imagePullPolicy: IfNotPresent
+            command: ["/bin/space-data-network-sim"]
+            args: ["-scenario", "golden-dome", "-json"]
+          restartPolicy: OnFailure
