@@ -1,6 +1,6 @@
 # FORGE-Sims TODO
 
-**Last Updated:** 2026-04-27
+**Last Updated:** 2026-05-02 (Round 26)
 
 ---
 
@@ -37,10 +37,72 @@
 - [x] 7 warfare sims (CBRN, cyber-kinetic, info-ops, land combat, logistics, nuclear effects, space data network)
 - [x] Space Force Command Center (Cesium 3D globe)
 - [x] NORAD Command Center (7 BMDS scenarios, 30+ sim endpoints)
+- [x] **Round 26 Evaluation Complete** — 81 binaries audited
+- [x] **space-data-network-sim documented** — about/space-data-network-sim.md created
+- [x] **EVALUATION.md updated** — R26 status documented
+- [x] **REMEDIATION-R26.md created** — Fix plan for 35 binaries
 
 ---
 
-## Remaining Work (P3)
+## Remaining Work (P1/P2 — Round 26 Remediation)
+
+### space-data-network-sim (P1)
+- [ ] Add `-json` flag for stdout JSON output
+- [ ] Add `-i` interactive mode (live dashboard)
+- [ ] Add `-v` verbose flag
+- [ ] Maintain backward compatibility with `-output` flag
+- [ ] Rebuild all platform binaries
+
+### Flag Standardization (P2 — 20 binaries)
+- [ ] bmd-sim-c2bmc: Add `-duration` alias for `-d`
+- [ ] bmd-sim-link16: Add `-duration` alias for `-d`
+- [ ] bmd-sim-jreap: Add `-duration` alias for `-d`
+- [ ] bmd-sim-jrsc: Add `-duration` alias for `-d`
+- [ ] bmd-sim-gfcb: Add `-duration` alias for `-d`
+- [ ] bmd-sim-decoy: Add `-duration` alias for `-d`
+- [ ] bmd-sim-ifxb: Add `-duration` alias for `-d`
+- [ ] bmd-sim-ir-signature: Add `-duration` alias for `-d`
+- [ ] bmd-sim-kill-assessment: Add `-duration` alias for `-d`
+- [ ] bmd-sim-rcs: Add `-duration` alias for `-d`
+- [ ] bmd-sim-satellite-weapon: Add `-duration` alias for `-d`
+- [ ] bmd-sim-wta: Add `-duration` alias for `-d`
+- [ ] boost-intercept: Add `-duration` alias for `-d`
+- [ ] debris-field: Add `-duration` alias for `-d`
+- [ ] electronic-war-sim: Add `-duration` alias for `-d`
+- [ ] emp-effects: Add `-duration` alias for `-d`
+- [ ] engagement-chain: Add `-duration` alias for `-d`
+- [ ] hgv: Add `-duration` alias for `-d`
+- [ ] kill-chain-rt: Add `-duration` alias for `-d`
+- [ ] tactical-net: Add `-duration` alias for `-d`
+
+### Duplicate Consolidation (P2 — 15 pairs)
+- [ ] Remove `air-traffic` (keep `bmd-sim-air-traffic`)
+- [ ] Remove `space-debris` (keep `bmd-sim-space-debris`)
+- [ ] Remove `satellite-tracker` (keep `bmd-sim-satellite-tracker`)
+- [ ] Remove `boost-intercept` (keep `bmd-sim-boost-intercept`)
+- [ ] Remove `debris-field` (keep `bmd-sim-debris-field`)
+- [ ] Remove `electronic-war-sim` (keep `bmd-sim-electronic-attack`)
+- [ ] Remove `emp-effects` (keep `bmd-sim-emp-effects`)
+- [ ] Remove `engagement-chain` (keep `bmd-sim-engagement-chain`)
+- [ ] Remove `hgv` (keep `bmd-sim-hgv`)
+- [ ] Remove `ir-signature` (keep `bmd-sim-ir-signature`)
+- [ ] Remove `kill-assessment` (keep `bmd-sim-kill-assessment`)
+- [ ] Remove `kill-chain-rt` (keep `bmd-sim-kill-chain-rt`)
+- [ ] Remove `rcs` (keep `bmd-sim-rcs`)
+- [ ] Remove `tactical-net` (keep `bmd-sim-tactical-net`)
+- [ ] Remove `wta` (keep `bmd-sim-wta`)
+- [ ] Update Makefile to skip non-prefixed builds
+- [ ] Update API_REFERENCE.md
+- [ ] Update README.md binary count
+
+### Text Cleanup (P3 — 3 binaries)
+- [ ] air-traffic: Suppress text before JSON output
+- [ ] bmd-sim-air-traffic: Suppress text before JSON output
+- [ ] satellite-tracker: Suppress text before JSON output
+
+---
+
+## Remaining Work (P3 — Legacy)
 
 ### launch-veh-sim
 - [ ] Vulcan Centaur: Low-TWR S2 crashes (needs PEG guidance)
