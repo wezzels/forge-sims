@@ -12,7 +12,7 @@ data:
   NORAD_API_URL: "http://norad-sim:5008"
   RUNNER_HOST: "darth"
   RUNNER_PORT: "8080"
-  BIN_DIR: "/host-bin"
+  BIN_DIR: "/usr/local/bin"
 ---
 # Simulators that run as periodic jobs
 apiVersion: batch/v1
@@ -31,7 +31,7 @@ spec:
           - name: kill-chain-rt
             image: forge-sims:latest
             imagePullPolicy: IfNotPresent
-            command: ["/bin/kill-chain-rt"]
+            command: ["/usr/local/bin/kill-chain-rt"]
             args: ["-scenario", "gmd-icbm-midcourse", "-json"]
           restartPolicy: OnFailure
 ---
@@ -51,7 +51,7 @@ spec:
           - name: satellite-weapon
             image: forge-sims:latest
             imagePullPolicy: IfNotPresent
-            command: ["/bin/satellite-weapon"]
+            command: ["/usr/local/bin/satellite-weapon"]
             args: ["-scenario", "direct-ascent-leo", "-json"]
           restartPolicy: OnFailure
 ---
@@ -71,7 +71,7 @@ spec:
           - name: launch-veh-sim
             image: forge-sims:latest
             imagePullPolicy: IfNotPresent
-            command: ["/bin/launch-veh-sim"]
+            command: ["/usr/local/bin/launch-veh-sim"]
             args: ["-vehicle", "falcon-heavy", "-json"]
           restartPolicy: OnFailure
 ---
@@ -91,6 +91,6 @@ spec:
           - name: space-data-network-sim
             image: forge-sims:latest
             imagePullPolicy: IfNotPresent
-            command: ["/bin/space-data-network-sim"]
+            command: ["/usr/local/bin/space-data-network-sim"]
             args: ["-scenario", "golden-dome", "-json"]
           restartPolicy: OnFailure
