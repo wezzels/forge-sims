@@ -3,11 +3,11 @@ stages:
   - lint
 
 variables:
-  GO_VERSION: "1.22"
+  GO_VERSION: "1.26"
 
 go_test:
   stage: test
-  image: forge-container.wezzel.com/library/golang:${GO_VERSION}
+  image: golang:${GO_VERSION}
   before_script:
     - go mod download || true
   script:
